@@ -269,7 +269,7 @@ class main extends Program{
     }
 
     boolean menuEntree(int menu){
-        return (menu >= 0 && menu <=3);
+        return (menu >= 0 && menu <=5);
     }
 
     boolean choixProfilValide(int choixProfil){
@@ -292,6 +292,7 @@ class main extends Program{
     }
 
     void algorithm(){
+        afficherText("fixage.txt");
         reset();
         int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1;
         int choixProfil = -1; String pseudo = "";
@@ -306,12 +307,13 @@ class main extends Program{
             clearScreen();
             afficherText("savoir.txt");
             println();
-            println("1 : Nouvelle partie");
+            /*println("1 : Nouvelle partie");
             println("2 : Reprendre une partie en cours");
             println("3 : Paramètres");
             println();
             println("0 : Quitter");
-
+            */
+            afficherText("menu.txt");
             while (!menuEntree(menu)){
                 println();
                 print("Veuillez entrez un entier valide : ");
@@ -358,12 +360,14 @@ class main extends Program{
 
                 while(!difficulteValide(difficulte)){
                     clearScreen();
-
+                    afficherText("difficulte.txt");
+                    /*
                     println("1 : Facile");
                     println("2 : Moyen");
                     println("3 : Difficile");
                     println();
                     println("0 : Retour");
+                    */
                     println();
                     print("Entrez une difficulté valide : ");
                     difficulte = readInt();
@@ -407,10 +411,13 @@ class main extends Program{
                     quit = jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
                     while (equals(quit, "quitter") && !valide_quitter(quitter_menu)){
                         clearScreen();
+                        afficherText("quitter_partie.txt");
+                        /*
                         println("1 : Quitter sans sauvegarder");
                         println("2 : Quitter en sauvegardant");
                         println();
                         println("0 : Retour");
+                        */
                         println();
                         print("Entrez un entier valide : ");
                         quitter_menu = readInt();
@@ -434,18 +441,21 @@ class main extends Program{
                 println("Pas encore fait");
             }
 
-            else if (menu == 3){
+            else if (menu == 5){
                 while(!paramValide(parametre)){
                     couleur = -1;
                     clearScreen();
-                    println("Paramètres : ");
+                    afficherText("parametre.txt");
                     println();
-                    println("1 : Modifier caractère joueur : "+joueur);
-                    println("2 : Modifier caractère chemin : "+chemin);
-                    println("3 : Modifier caractère épreuve : "+ epreuve);
-                    println("4 : Modifier les couleurs");
+                    println("           1 : Modifier caractère joueur : "+joueur);
+                    println("           2 : Modifier caractère chemin : "+chemin);
+                    println("           3 : Modifier caractère épreuve : "+ epreuve);
+                    println("           4 : Modifier les couleurs");
                     println();
-                    println("0 : Retour");
+                    println("           0 : Retour");
+                    println();
+                    println();
+                    println();
                     println();
                     print("Entrez un entier valide : ");
                     parametre = readInt();
@@ -469,6 +479,8 @@ class main extends Program{
                     } else if (parametre == 4){
                         while(!couleurValide(couleur) && parametre == 4){
                             clearScreen();
+                            afficherText("couleurs.txt");
+                            /*
                             println("Couleurs : ");
                             println();
                             println("1 : Rose");
@@ -479,6 +491,7 @@ class main extends Program{
                             println("6 : Reset");
                             println();
                             println("0 : Retour");
+                            */
                             println();
                             print("Entrez un entier valide : ");
                             couleur = readInt();
