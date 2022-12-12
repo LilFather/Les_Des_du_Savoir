@@ -72,10 +72,10 @@ class main extends Program{
         int nb2 = 0;
         double res = 0.0;
         double proba = random();
-        if (difficulte == 2){
+        if (difficulte == 3){
             nb1 = (int) (random()*1000);
             nb2 = (int) (random()*1000);
-        } else if (difficulte == 1){
+        } else if (difficulte == 2){
             nb1 = (int) (random()*100);
             nb2 = (int) (random()*100);
         } else {
@@ -180,10 +180,10 @@ class main extends Program{
         }
     }
     */
-    void afficherLogo(){
-        File logo = newFile("savoir.txt");
-        while(ready(logo)){
-            println(readLine(logo));
+    void afficherText(String fichier){
+        File f = newFile(fichier);
+        while(ready(f)){
+            println(readLine(f));
         }
     }
 
@@ -292,6 +292,7 @@ class main extends Program{
     }
 
     void algorithm(){
+        reset();
         int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1;
         int choixProfil = -1; String pseudo = "";
         int case_actuelle = 0; String quit = "";
@@ -303,12 +304,13 @@ class main extends Program{
         while(true){
             difficulte = -1; parametre = -1;
             clearScreen();
-            afficherLogo();
+            afficherText("savoir.txt");
             println();
-            println("0 : Nouvelle partie");
-            println("1 : Reprendre une partie en cours");
-            println("2 : Paramètres");
-            println("3 : Quitter");
+            println("1 : Nouvelle partie");
+            println("2 : Reprendre une partie en cours");
+            println("3 : Paramètres");
+            println();
+            println("0 : Quitter");
 
             while (!menuEntree(menu)){
                 println();
@@ -317,7 +319,7 @@ class main extends Program{
                 println();
             }
 
-            if (menu == 0){
+            if (menu == 1){
                 plateau = creerPlateau(taille_tableau , case_actuelle);
 
                 while(!choixProfilValide(choixProfil)){
@@ -357,21 +359,21 @@ class main extends Program{
                 while(!difficulteValide(difficulte)){
                     clearScreen();
 
-                    println("0 : Facile");
-                    println("1 : Moyen");
-                    println("2 : Difficile");
+                    println("1 : Facile");
+                    println("2 : Moyen");
+                    println("3 : Difficile");
                     println();
-                    println("3 : Retour");
+                    println("0 : Retour");
                     println();
                     print("Entrez une difficulté valide : ");
                     difficulte = readInt();
                     println();
-                    if (difficulte == 3){
+                    if (difficulte == 0){
                         menu = -1;
                     }
                 }    
 
-                while(vies>0 && menu==0){
+                while(vies>0 && menu==1){
                     quitter_menu = -1; quit = "";
                     clearScreen();
                     println(toString(plateau));
@@ -405,21 +407,21 @@ class main extends Program{
                     quit = jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
                     while (equals(quit, "quitter") && !valide_quitter(quitter_menu)){
                         clearScreen();
-                        println("0 : Quitter sans sauvegarder");
-                        println("1 : Quitter en sauvegardant");
+                        println("1 : Quitter sans sauvegarder");
+                        println("2 : Quitter en sauvegardant");
                         println();
-                        println("2 : Retour");
+                        println("0 : Retour");
                         println();
                         print("Entrez un entier valide : ");
                         quitter_menu = readInt();
-                        if (quitter_menu == 0){
+                        if (quitter_menu == 1){
                             menu = -1;
-                        } else if(quitter_menu == 1){
+                        } else if(quitter_menu == 2){
                             saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
                             println("Sauvegarde effectuée !");
                             menu = -1;
                         }
-                        else if (quitter_menu == 2){
+                        else if (quitter_menu == 0){
                             quitter_menu = -1;
                             quit = "";
                         }
@@ -428,81 +430,81 @@ class main extends Program{
                 }
             }
 
-            else if (menu == 1){
+            else if (menu == 2){
                 println("Pas encore fait");
             }
 
-            else if (menu == 2){
+            else if (menu == 3){
                 while(!paramValide(parametre)){
                     couleur = -1;
                     clearScreen();
                     println("Paramètres : ");
                     println();
-                    println("0 : Modifier caractère joueur : "+joueur);
-                    println("1 : Modifier caractère chemin : "+chemin);
-                    println("2 : Modifier caractère épreuve : "+ epreuve);
-                    println("3 : Modifier les couleurs");
+                    println("1 : Modifier caractère joueur : "+joueur);
+                    println("2 : Modifier caractère chemin : "+chemin);
+                    println("3 : Modifier caractère épreuve : "+ epreuve);
+                    println("4 : Modifier les couleurs");
                     println();
-                    println("4 : Retour");
+                    println("0 : Retour");
                     println();
                     print("Entrez un entier valide : ");
                     parametre = readInt();
-                    if (parametre == 4){
+                    if (parametre == 0){
                         menu = -1;
-                    } else if (parametre == 0){
+                    } else if (parametre == 1){
                         println();
                         print("Entrez un caractère : ");
                         joueur = readChar();
                         parametre = -1;
-                    } else if (parametre == 1){
+                    } else if (parametre == 2){
                         println();
                         print("Entrez un caractère : ");
                         chemin = readChar();
                         parametre = -1;
-                    } else if (parametre == 2){
+                    } else if (parametre == 3){
                         println();
                         print("Entrez un caractère : ");
                         epreuve = readChar();
                         parametre = -1;
-                    } else if (parametre == 3){
-                        while(!couleurValide(couleur) && parametre == 3){
+                    } else if (parametre == 4){
+                        while(!couleurValide(couleur) && parametre == 4){
                             clearScreen();
                             println("Couleurs : ");
                             println();
-                            println("0 : Rouge");
-                            println("1 : Bleu");
-                            println("2 : Vert");
-                            println("3 : Blanc");
-                            println("4 : Noir");
-                            println("5 : Reset");
+                            println("1 : Rose");
+                            println("2 : Bleu");
+                            println("3 : Vert");
+                            println("4 : Blanc");
+                            println("5 : Noir");
+                            println("6 : Reset");
                             println();
-                            println("6 : Retour");
+                            println("0 : Retour");
                             println();
                             print("Entrez un entier valide : ");
                             couleur = readInt();
 
-                            if (couleur == 6){
+                            if (couleur == 0){
                                 parametre = -1;
-                            } else if(couleur == 5){
+                            } else if(couleur == 6){
                                 reset();
                                 couleur = -1;
-                            } else if (couleur == 0){
+                            } else if (couleur == 1){
                                 text("red");
                                 background("black");
                                 couleur = -1;
-                            } else if (couleur == 1){
+                            } else if (couleur == 2){
                                 text("blue");
                                 background("white");
                                 couleur = -1;
-                            } else if (couleur == 2){
+                            } else if (couleur == 3){
                                 text("green");
                                 background("black");
                                 couleur = -1;
-                            } else if (couleur == 3){
+                            } else if (couleur == 4){
                                 text("white");
                                 background("black");
                                 couleur = -1;
-                            } else if (couleur == 4){
+                            } else if (couleur == 5){
                                 text("black");
                                 background("white");
                                 couleur = -1;
@@ -510,7 +512,7 @@ class main extends Program{
                         }
                     }
                 }
-            }else if(menu == 3){
+            }else if(menu == 0){
                 clearScreen();
                 break;
             } 
