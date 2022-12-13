@@ -1,0 +1,13 @@
+
+
+
+            1 : Nouvelle partie
+            2 : Reprendre une partie en cours
+            3 : Statistiques
+            4 : Classement
+            5 : Paramètres
+
+            0 : Quitter
+
+
+            
