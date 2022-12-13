@@ -223,11 +223,17 @@ class main extends Program{
     void saveProfil(int choixProfil, String pseudo, int difficulte, int score, int nb_tours){
         CSVFile profilJoueur = loadCSV("save_profil.csv");
         int nbL = rowCount(profilJoueur);
-
-        String[][] chaines = new String[1][9];
+        int nbCol = columnCount(profilJoueur);
 
         if(choixProfil == 1){ // Créer un profil
+            String[][] chaines = new String[nbL+1][nbCol];
             Profil p = creerProfil(pseudo, score, nb_tours);
+
+            for(int l=0; l<nbL; l++){
+               for(int col=0; col<nbCol; col++){
+                chaines[l][col] = getCell(profilJoueur, l, col);
+               } 
+            }
 
             if(difficulte == 0){ // FACILE
                 p.partie_facile = 1;
@@ -239,20 +245,20 @@ class main extends Program{
                 p.partie_difficile = 1;
             }
 
-            chaines[0][0] = p.pseudo;
-            chaines[0][1] = p.nb_partie + "";
-            chaines[0][2] = p.partie_facile + "";
-            chaines[0][3] = p.partie_moyen + "";
-            chaines[0][4] = p.partie_difficile + "";
-            chaines[0][5] = p.total_score + "";
-            chaines[0][6] = p.best_score + "";
-            chaines[0][7] = p.total_tour_joues + "";
-            chaines[0][8] = p.best_tour_joues + "";
+            chaines[nbL][0] = p.pseudo;
+            chaines[nbL][1] = p.nb_partie + "";
+            chaines[nbL][2] = p.partie_facile + "";
+            chaines[nbL][3] = p.partie_moyen + "";
+            chaines[nbL][4] = p.partie_difficile + "";
+            chaines[nbL][5] = p.total_score + "";
+            chaines[nbL][6] = p.best_score + "";
+            chaines[nbL][7] = p.total_tour_joues + "";
+            chaines[nbL][8] = p.best_tour_joues + "";
 
             saveCSV(chaines, "save_profil.csv");
         }
         else if(choixProfil == 2){ // Sauvegarde sur un profil existant
-
+            print("Pas fait");
         }
     }
 
