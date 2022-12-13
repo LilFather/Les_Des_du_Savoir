@@ -5,6 +5,8 @@ class main extends Program{
     char joueur = 'J';
     char chemin = '#';
     char epreuve = '?';
+    String couleur_epreuve = "red";
+    String couleur_base = "white";
     final int taille_tableau = 190;
     final double proba_epreuve = 0.33;
 
@@ -84,16 +86,24 @@ class main extends Program{
         }
 
         if(proba<0.25){
-            println(""+nb1+"/"+nb2 + 1);
-            return (nb1/nb2);
+            text(couleur_epreuve);
+            println("           "+nb1+"/"+(nb2 + 1));
+            text(couleur_base);
+            return (nb1/(nb2+1));
         }else if (proba<0.5){
-            println(""+nb1+"*"+nb2);
+            text(couleur_epreuve);
+            println("           "+nb1+"*"+nb2);
+            text(couleur_base);
             return (nb1*nb2);
         }else if (proba<0.75){
-            println(""+nb1+"+"+nb2);
+            text(couleur_epreuve);
+            println("           "+nb1+"+"+nb2);
+            text(couleur_base);
             return (nb1+nb2);
         }else{
-            println(""+nb1+"-"+nb2);
+            text(couleur_epreuve);
+            println("           "+nb1+"-"+nb2);
+            text(couleur_base);
             return (nb1-nb2);
         }
     }
@@ -294,11 +304,11 @@ class main extends Program{
     }
 
     boolean valide_quitter(int quitter){
-        return (quitter>=0 && quitter <= 1);
+        return (quitter>=0 && quitter <= 2);
     }
 
     void algorithm(){
-        afficherText("fixage.txt");
+        afficherText("fixage.txt"); couleur_base = "white";
         reset();
         int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1;
         int choixProfil = -1; String pseudo = "";
@@ -332,13 +342,14 @@ class main extends Program{
 
                 while(!choixProfilValide(choixProfil)){
                     clearScreen();
-
+                    afficherText("creerjoueurmenu.txt");
+                    /*
                     println("1 : Créer un joueur");
                     println("2 : Jouer avec un joueur existant");
 
                     println();
                     println("0 : Retour");
-
+                    */
                     println();
                     print("Entez un choix valide: ");
                     choixProfil = readInt();
@@ -388,10 +399,10 @@ class main extends Program{
                     clearScreen();
                     println(toString(plateau));
                     println();
-                    println("Joueur : " + pseudo);
-                    println("Vies restantes : " + vies);
-                    println("Tour : " + nb_tours);
-                    println("Score : " + score);
+                    println("           Joueur : " + pseudo);
+                    println("           Vies restantes : " + vies);
+                    println("           Tour : " + nb_tours);
+                    println("           Score : " + score);
                     println();
                     mouv = movement();
                     nb_tours += 1;
@@ -431,7 +442,10 @@ class main extends Program{
                             menu = -1;
                         } else if(quitter_menu == 2){
                             saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
+
                             println("Sauvegarde effectuée !");
+                            delay(1500);
+                            
                             menu = -1;
                         }
                         else if (quitter_menu == 0){
@@ -505,26 +519,31 @@ class main extends Program{
                             if (couleur == 0){
                                 parametre = -1;
                             } else if(couleur == 6){
-                                reset();
+                                reset(); couleur_base = "white";
                                 couleur = -1;
                             } else if (couleur == 1){
-                                text("red");
+                                couleur_base = "red";
+                                text(couleur_base);
                                 background("black");
                                 couleur = -1;
                             } else if (couleur == 2){
-                                text("blue");
+                                couleur_base = "blue";
+                                text(couleur_base);
                                 background("white");
                                 couleur = -1;
                             } else if (couleur == 3){
-                                text("green");
+                                couleur_base = "green";
+                                text(couleur_base);
                                 background("black");
                                 couleur = -1;
                             } else if (couleur == 4){
-                                text("white");
+                                couleur_base = "white";
+                                text(couleur_base);
                                 background("black");
                                 couleur = -1;
                             } else if (couleur == 5){
-                                text("black");
+                                couleur_base = "black";
+                                text(couleur_base);
                                 background("white");
                                 couleur = -1;
                             }
