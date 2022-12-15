@@ -3,11 +3,11 @@ import extensions.CSVFile;
 
 class main extends Program{
     char joueur = 'J';
-    char chemin = '#';
+    char chemin = '_';
     char epreuve = '?';
     String couleur_epreuve = "red";
     String couleur_base = "white";
-    final int taille_tableau = 190;
+    final int taille_tableau = 152;
     final double proba_epreuve = 0.33;
 
 
@@ -15,31 +15,40 @@ class main extends Program{
         return (int) ((random()*6) +1);
     }
 
-    char[]creerPlateau(int taille , int case_actuelle){
-        char [] plateau = new char[taille];
+    Cases[]creerPlateau(int taille , int case_actuelle){
+        Cases [] plateau = new Cases[taille];
         for (int i = 0 ; i<taille; i++){
-            plateau[i]=chemin;
-            if (random()<proba_epreuve && i!=0){
-                plateau[i]=epreuve;
+            if (random()<proba_epreuve && i>6){
+                plateau[i]=Cases.EPREUVE;
+            }else{
+                plateau[i]=Cases.CHEMIN;
             }
         }
-        plateau[case_actuelle] = joueur;
+        plateau[case_actuelle] = Cases.JOUEUR;
         return plateau;
     }
 
-    String toString(char[] plateau){
+    char casesToChar(Cases cases){
+            if(cases==Cases.JOUEUR){
+                return joueur;
+            }else if(cases==Cases.EPREUVE){
+                return epreuve;
+            }else{
+                return chemin;
+            }
+    }
+    String toString(Cases[] plateau){
         String res = "";
         int len = length(plateau);
         for(int i = 0;i<len ;i++){
-            res += plateau[i];
+            res += casesToChar(plateau[i]);
         }
         return res;
     }
 
-    void deplacerJoueur(char[] plateau , int case_actuelle, int prochaine){
-        int resultat = 0;
-        char tmp = plateau[prochaine];
-        plateau[prochaine] = joueur;
+    void deplacerJoueur(Cases[] plateau , int case_actuelle, int prochaine){
+        Cases tmp = plateau[prochaine];
+        plateau[prochaine] = Cases.JOUEUR;
         plateau[case_actuelle] = tmp;
     }
 
@@ -56,7 +65,7 @@ class main extends Program{
         plateau[case_actuelle]=chemin;
     }
 */
-    String jouerTour(char[] plateau, int case_actuelle, int prochaine){
+    String jouerTour(Cases[] plateau, int case_actuelle, int prochaine){
         println("Veuillez lancer le dé en appuyant sur \"Entrée\" ou entrer \"quitter\" pour quitter");
         String res = readString();
         int resultat = 0;
@@ -111,6 +120,15 @@ class main extends Program{
         return (res==reponse);
     }
 
+    boolean estUnEntier(String chaine){
+        boolean oui = false; int cpt = 0;
+        int len = length(chaine);
+        while(cpt<len && !oui){
+            oui = (charAt(chaine, cpt)>'0' && charAt(chaine,cpt)<'9');
+        }
+        return oui;
+    }
+
     Epreuve creerCategorie(String categorie, String[] questions, String[] reponses, int nb_questions){
         Epreuve c = new Epreuve();
         c.categorie = categorie;
@@ -121,7 +139,6 @@ class main extends Program{
 
     Profil creerProfil(String pseudo, int score, int nb_tours){
         Profil p = new Profil();
-
         p.pseudo = pseudo;
 
         p.nb_partie = 1;
@@ -368,7 +385,7 @@ class main extends Program{
         int mouv = 0, nb_tours = 1;
         int res_epreuve_math = 0; int reponse_math = 0;
         int vies = 5; int menu = -1; int score = 0;
-        char[] plateau = new char[taille_tableau];
+        Cases[] plateau = new Cases[taille_tableau];
 
         while(true){
             difficulte = -1; parametre = -1;
@@ -405,7 +422,7 @@ class main extends Program{
                     println("0 : Retour");
                     */
                     println();
-                    print("Entrez un entier valide : ");
+                    print("Entrez un choix valide : ");
                     choixProfil = readInt();
                     println();
 
@@ -448,10 +465,9 @@ class main extends Program{
                     }
                 }    
 
-                while(vies>0 && menu==1){
+                while(menu==1){
                     quitter_menu = -1; quit = "";
                     clearScreen();
-
                     println(toString(plateau));
                     println();
                     println("           Joueur : " + pseudo);
@@ -459,11 +475,10 @@ class main extends Program{
                     println("           Tour : " + nb_tours);
                     println("           Score : " + score);
                     println();
-
                     mouv = movement();
                     nb_tours += 1;
 
-                    if (plateau[prochaineCase(case_actuelle,mouv)] == epreuve){
+                    if (plateau[prochaineCase(case_actuelle,mouv)] == Cases.EPREUVE){
                         res_epreuve_math = epreuveMath(difficulte);
                         println();
                         print("Entrez une réponse : ");
@@ -471,18 +486,17 @@ class main extends Program{
                         println();
 
                         if (!testerResultatMath(res_epreuve_math , reponse_math)){
-                            println("Mauvaise réponse !");
+                            println("Mauvaise réponse, c'était " +res_epreuve_math);
                             vies -= 1;
                             score -= scoreMultiplieur(difficulte) + 100;
                             println();
                         }else{
-                            println("Bonne réponse !");
+                            println("Bonne réponse");
                             score += ( mouv + scoreMultiplieur(difficulte) ) + 100; 
                             println();
                         }
                     }
                     quit = jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
-
                     while (equals(quit, "quitter") && !valide_quitter(quitter_menu)){
                         clearScreen();
                         afficherText("quitter_partie.txt");
@@ -495,16 +509,15 @@ class main extends Program{
                         println();
                         print("Entrez un entier valide : ");
                         quitter_menu = readInt();
-
                         if (quitter_menu == 1){
+                            case_actuelle = 0;
                             menu = -1;
-                        }
-                        else if(quitter_menu == 2){
+                        } else if(quitter_menu == 2){
                             saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
 
-                            println("Sauvegarde Effectuée !");
+                            println("Sauvegarde effectuée !");
                             delay(1500);
-                            
+                            case_actuelle = 0;
                             menu = -1;
                         }
                         else if (quitter_menu == 0){
@@ -512,8 +525,20 @@ class main extends Program{
                             quit = "";
                         }
                     }
-
                     case_actuelle=prochaineCase(case_actuelle,mouv);
+                    if (vies == 0){
+                        clearScreen();
+                        afficherText("defaite.txt");
+                        println(toString(plateau));
+                        println();
+                        println("           Joueur : " + pseudo);
+                        println("           Tour : " + nb_tours);
+                        println("           Score : " + score);
+                        println();
+                        println("Sauvegarde en cours...");
+                        delay(2000);
+                        saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
+                    }
                 }
             }
 
@@ -521,11 +546,10 @@ class main extends Program{
                 println("Pas encore fait");
             }
 
-            else if (menu == 5){
+            else if (menu == 4){
                 while(!paramValide(parametre)){
                     couleur = -1;
                     clearScreen();
-
                     afficherText("parametre.txt");
                     println();
                     println("           1 : Modifier caractère joueur : "+joueur);
@@ -540,10 +564,9 @@ class main extends Program{
                     println();
                     print("Entrez un entier valide : ");
                     parametre = readInt();
-
                     if (parametre == 0){
                         menu = -1;
-                    }else if (parametre == 1){
+                    } else if (parametre == 1){
                         println();
                         print("Entrez un caractère : ");
                         joueur = readChar();
@@ -612,7 +635,14 @@ class main extends Program{
                         }
                     }
                 }
+            }else if(menu == 5){
+                clearScreen();
+                afficherText("regle.txt");
+                print("Mettez \"Entrée\" pour retourner au menu : ");
+                readString();
+                menu = -1;
             }
+            
             else if(menu == 0){
                 clearScreen();
                 break;

@@ -1,0 +1,1 @@
+enum Cases {JOUEUR, CHEMIN, EPREUVE}
