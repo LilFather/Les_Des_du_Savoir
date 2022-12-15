@@ -117,6 +117,19 @@ class LesDesDuSavoir extends Program{
             return (nb1-nb2);
         }
     }
+
+    int scoreMultiplieur(int difficulte){
+        if(difficulte == 2){
+            return 9;
+        }
+        else if(difficulte == 1){
+            return 3;
+        }
+        else{
+            return 1;
+        }
+    }
+
     boolean testerResultatMath(int res, int reponse){
         return (res==reponse);
     }
@@ -233,37 +246,6 @@ class LesDesDuSavoir extends Program{
         return getCell(profilJoueur, choixJoueur-1, 0);
     }
 
-    String[] getPlayerStat(int choixStat){
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
-        int col = columnCount(profilJoueur);
-
-        String[] stat = new String[col];
-        
-        for(int i=0; i<col; i++){
-            stat[i] = getCell(profilJoueur, choixStat-1, i);
-        }
-
-        return stat;
-    }
-
-    void afficherPlayerStat(String[] playerStat){
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
-        int nbCol = columnCount(profilJoueur);
-
-        println("Joueur : " + playerStat[0] + "\n");
-
-        println("Parties totales : " + playerStat[1]);
-        print("Parties joués en facile : " + playerStat[2] + "\t");
-        print("Parties joués en moyen : " + playerStat[3] + "\t");
-        println("Parties jouées en difficile : " + playerStat[4]);
-
-        print("Score total : " + playerStat[5] + "\t");
-        println("Meilleur score effectué : " + playerStat[6]);
-
-        print("Tour joués : " + playerStat[7] + "\t");
-        println("Tour joués en une partie : " + playerStat[8]);
-    }
-
     void saveProfil(int choixProfil, String pseudo, int difficulte, int score, int nb_tours){
         CSVFile profilJoueur = loadCSV("save_profil.csv");
         int nbL = rowCount(profilJoueur);
@@ -291,12 +273,15 @@ class LesDesDuSavoir extends Program{
             }
 
             chaines[nbL][0] = p.pseudo;
+
             chaines[nbL][1] = p.nb_partie + "";
             chaines[nbL][2] = p.partie_facile + "";
             chaines[nbL][3] = p.partie_moyen + "";
             chaines[nbL][4] = p.partie_difficile + "";
+
             chaines[nbL][5] = p.total_score + "";
             chaines[nbL][6] = p.best_score + "";
+
             chaines[nbL][7] = p.total_tour_joues + "";
             chaines[nbL][8] = p.best_tour_joues + "";
 
@@ -338,12 +323,15 @@ class LesDesDuSavoir extends Program{
                     }
 
                     chaines[l][0] = p.pseudo;
+
                     chaines[l][1] = p.nb_partie + "";
                     chaines[l][2] = p.partie_facile + "";
                     chaines[l][3] = p.partie_moyen + "";
                     chaines[l][4] = p.partie_difficile + "";
+
                     chaines[l][5] = p.total_score + "";
                     chaines[l][6] = p.best_score + "";
+
                     chaines[l][7] = p.total_tour_joues + "";
                     chaines[l][8] = p.best_tour_joues + "";
                 }
@@ -358,16 +346,94 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    int scoreMultiplieur(int difficulte){
-        if(difficulte == 2){
-            return 9;
+    String[] getPlayerStat(int choixStat){
+        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        int col = columnCount(profilJoueur);
+
+        String[] stat = new String[col];
+        
+        for(int i=0; i<col; i++){
+            stat[i] = getCell(profilJoueur, choixStat-1, i);
         }
-        else if(difficulte == 1){
-            return 3;
+
+        return stat;
+    }
+
+    void afficherPlayerStat(String[] playerStat){
+        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        int nbCol = columnCount(profilJoueur);
+
+        println("            Joueur : " + playerStat[0] + "\n");
+
+        println("            Parties totales : " + playerStat[1]);
+        print("            Parties joués en facile : " + playerStat[2] + "\t");
+        print("            Parties joués en moyen : " + playerStat[3] + "\t");
+        println("            Parties jouées en difficile : " + playerStat[4]);
+
+        print("            Score total : " + playerStat[5] + "\t");
+        println("            Meilleur score effectué : " + playerStat[6]);
+
+        print("            Tour joués : " + playerStat[7] + "\t");
+        println("            Tour joués en une partie : " + playerStat[8]);
+    }
+
+    void afficherClassement(){ // 3 colonnes: "PSEUDO" "BEST_SCORE" "DIFFICULTE"
+        final int LARG = 10;
+
+        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        int nbL = rowCount(profilJoueur),
+            nbCol = columnCount(profilJoueur),
+            longCol = 15,
+            longCol_Pseudo = 0, longCol_BestScore = 0, longCol_Difficulte = 0;
+
+        for(int i=0; i<nbL-1; i++){
+
+            // Calcul longueur pour colonne "PSEUDO"
+            if(length(getCell(profilJoueur, i, 0) ) >= length(getCell(profilJoueur, i+1, 0) ) ){
+                longCol_Pseudo = length(getCell(profilJoueur, i, 0) );
+            }
+            else{
+                longCol_Pseudo = length(getCell(profilJoueur, i+1, 0) );
+            }
+
+            // Calcul longueur pour colonne "BEST_SCORE"
+            if(length(getCell(profilJoueur, i, 6) ) >= length(getCell(profilJoueur, i+1, 6) ) ){
+                longCol_BestScore = length(getCell(profilJoueur, i, 6) );
+            }
+            else{
+                longCol_BestScore = length(getCell(profilJoueur, i+1, 6) );
+            }
+
+            // Calcul ongueur pour colonne "DIFFICULTE"
+            if(length(getCell(profilJoueur, i, 8) ) >= length(getCell(profilJoueur, i+1, 8) ) ){
+                longCol_Difficulte = length(getCell(profilJoueur, i, 8) );
+            }
+            else{
+                longCol_Difficulte = length(getCell(profilJoueur, i+1, 8) );
+            }
         }
-        else{
-            return 1;
+
+        longCol += longCol_Pseudo + longCol_BestScore + longCol_Difficulte;
+
+        for(int i=0; i<longCol; i++){
+            print("_");
         }
+
+        println();
+
+        for(int l=1; l<=LARG; l++){
+            //for(int col=0; col<longCol; col++){
+                print("| " + l + ". " + " | " + " | " + " |");
+            //}
+
+            println();
+        }
+
+        for(int i=0; i<longCol; i++){
+            print("_");
+        }
+
+        println();
     }
 
     boolean menuEntree(int menu){
@@ -405,7 +471,7 @@ class LesDesDuSavoir extends Program{
         afficherText("fixage.txt"); couleur_base = "white";
         reset();
         int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1;
-        int choixProfil = -1; String pseudo = ""; int choixStat = -1;
+        int choixProfil = -1; String pseudo = ""; int choixStat = -1; int choixRanking = -1;
         int case_actuelle = 0; String quit = "";
         int mouv = 0, nb_tours = 1;
         int res_epreuve_math = 0; int reponse_math = 0;
@@ -414,7 +480,7 @@ class LesDesDuSavoir extends Program{
 
         while(true){
             difficulte = -1; parametre = -1;
-            choixProfil = -1; choixStat = -1; pseudo = "";
+            choixProfil = -1; choixStat = -1; choixRanking = -1; pseudo = "";
             nb_tours = 1; score = 0;
             clearScreen();
             afficherText("savoir.txt");
@@ -602,7 +668,22 @@ class LesDesDuSavoir extends Program{
 
             }
             else if(menu == 3){ // CLASSEMENT
-                
+                while(choixRanking != 0){
+                    clearScreen();
+                    afficherText("classement.txt");
+                    println();
+
+                    afficherClassement();
+                    println("\n\n\n");
+                    println("            0 : Retour");
+                    println("\n\n\n");
+
+                    print("Entrez un entier valide : ");
+                    choixRanking = readInt();
+                    if(choixRanking == 0){
+                        menu = -1;
+                    }
+                }
             }
             else if (menu == 4){
                 while(!paramValide(parametre)){
