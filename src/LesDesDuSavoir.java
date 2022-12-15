@@ -1,15 +1,16 @@
 import extensions.File;
 import extensions.CSVFile;
 
-class main extends Program{
+class LesDesDuSavoir extends Program{
     char joueur = 'J';
     char chemin = '_';
     char epreuve = '?';
+
     String couleur_epreuve = "red";
     String couleur_base = "white";
-    final int taille_tableau = 152;
-    final double proba_epreuve = 0.33;
 
+    final int TAILLE_TABLEAU = 152;
+    final double PROBA_EPREUVE = 0.33;
 
     int movement(){
         return (int) ((random()*6) +1);
@@ -18,7 +19,7 @@ class main extends Program{
     Cases[]creerPlateau(int taille , int case_actuelle){
         Cases [] plateau = new Cases[taille];
         for (int i = 0 ; i<taille; i++){
-            if (random()<proba_epreuve && i>6){
+            if (random()<PROBA_EPREUVE && i>6){
                 plateau[i]=Cases.EPREUVE;
             }else{
                 plateau[i]=Cases.CHEMIN;
@@ -53,8 +54,8 @@ class main extends Program{
     }
 
     int prochaineCase(int case_actuelle , int mouv){
-        if (case_actuelle+mouv>=taille_tableau){
-            return case_actuelle+mouv-taille_tableau;
+        if (case_actuelle+mouv>=TAILLE_TABLEAU){
+            return case_actuelle+mouv-TAILLE_TABLEAU;
         }else{
             return case_actuelle+mouv;
         }
@@ -185,7 +186,7 @@ class main extends Program{
         int case_actuelle = 0;
         int mouv = 0;
         int res_epreuve = 0; int reponse = 0;
-        char[] plateau = creerPlateau(taille_tableau , case_actuelle);
+        char[] plateau = creerPlateau(TAILLE_TABLEAU , case_actuelle);
         while(true){
             println(toString(plateau));
             println();
@@ -232,19 +233,35 @@ class main extends Program{
         return getCell(profilJoueur, choixJoueur-1, 0);
     }
 
-    void afficherProfil(){
+    String[] getPlayerStat(int choixStat){
         CSVFile profilJoueur = loadCSV("save_profil.csv");
-        int nbL = rowCount(profilJoueur);
+        int col = columnCount(profilJoueur);
+
+        String[] stat = new String[col];
+        
+        for(int i=0; i<col; i++){
+            stat[i] = getCell(profilJoueur, choixStat-1, i);
+        }
+
+        return stat;
+    }
+
+    void afficherPlayerStat(String[] playerStat){
+        CSVFile profilJoueur = loadCSV("save_profil.csv");
         int nbCol = columnCount(profilJoueur);
 
-        for(int l=0; l<nbL; l++){
-            for(int col=0; col<nbCol; col++){
-                String cell = getCell(profilJoueur, l, col);
-                print(cell + " ");
-            }
+        println("Joueur : " + playerStat[0] + "\n");
 
-            println();
-        }
+        println("Parties totales : " + playerStat[1]);
+        print("Parties joués en facile : " + playerStat[2] + "\t");
+        print("Parties joués en moyen : " + playerStat[3] + "\t");
+        println("Parties jouées en difficile : " + playerStat[4]);
+
+        print("Score total : " + playerStat[5] + "\t");
+        println("Meilleur score effectué : " + playerStat[6]);
+
+        print("Tour joués : " + playerStat[7] + "\t");
+        println("Tour joués en une partie : " + playerStat[8]);
     }
 
     void saveProfil(int choixProfil, String pseudo, int difficulte, int score, int nb_tours){
@@ -365,9 +382,17 @@ class main extends Program{
         return (difficulte>=0 && difficulte <=3);
     }
 
+    boolean choixStatValide(int choixStat){
+        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        int nbL = rowCount(profilJoueur);
+
+        return choixStat >= 0 && choixStat <= nbL;
+    }
+
     boolean paramValide(int param){
         return (param>=0 && param <=4);
     }
+
     boolean couleurValide(int couleur){
         return (couleur>=0 && couleur <= 6);
     }
@@ -380,16 +405,16 @@ class main extends Program{
         afficherText("fixage.txt"); couleur_base = "white";
         reset();
         int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1;
-        int choixProfil = -1; String pseudo = "";
+        int choixProfil = -1; String pseudo = ""; int choixStat = -1;
         int case_actuelle = 0; String quit = "";
         int mouv = 0, nb_tours = 1;
         int res_epreuve_math = 0; int reponse_math = 0;
         int vies = 5; int menu = -1; int score = 0;
-        Cases[] plateau = new Cases[taille_tableau];
+        Cases[] plateau = new Cases[TAILLE_TABLEAU];
 
         while(true){
             difficulte = -1; parametre = -1;
-            choixProfil = -1; pseudo = "";
+            choixProfil = -1; choixStat = -1; pseudo = "";
             nb_tours = 1; score = 0;
             clearScreen();
             afficherText("savoir.txt");
@@ -409,7 +434,7 @@ class main extends Program{
             }
 
             if (menu == 1){
-                plateau = creerPlateau(taille_tableau , case_actuelle);
+                plateau = creerPlateau(TAILLE_TABLEAU , case_actuelle);
 
                 while(!choixProfilValide(choixProfil)){
                     clearScreen();
@@ -541,11 +566,44 @@ class main extends Program{
                     }
                 }
             }
+            else if(menu == 2){ // STATISTIQUES
+                while(!choixStatValide(choixStat)){
+                    clearScreen();
+                    afficherText("statistiques.txt");
+                    println();
+    
+                    afficherListeJoueur();
+                    println();
+                    println("            0 : Retour");
+                    println("\n\n\n");
+                    print("Choisir le profil à afficher : ");
 
-            else if (menu == 2){
-                println("Pas encore fait");
+                    choixStat = readInt();
+                    if(choixStat == 0){
+                        menu = -1;
+                    }
+                    else{
+                        clearScreen();
+                        afficherText("statistiques.txt");
+                        println();
+
+                        afficherPlayerStat(getPlayerStat(choixStat) );
+                        println("\n\n\n");
+                        println("            0 : Retour");
+                        println("\n\n\n");
+
+                        print("Entrez un entier valide : ");
+                        choixStat = readInt();
+                        if(choixStat == 0){
+                            menu = 2;
+                        }
+                    }
+                }
+
             }
-
+            else if(menu == 3){ // CLASSEMENT
+                
+            }
             else if (menu == 4){
                 while(!paramValide(parametre)){
                     couleur = -1;
