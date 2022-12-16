@@ -378,17 +378,23 @@ class LesDesDuSavoir extends Program{
     }
 
     void afficherClassement(){ // 3 colonnes: "PSEUDO" "BEST_SCORE" "DIFFICULTE"
-        final int LARG = 10;
+        final int LARG = 7; // Affichage du TOP 7
 
         CSVFile profilJoueur = loadCSV("save_profil.csv");
         int nbL = rowCount(profilJoueur),
             nbCol = columnCount(profilJoueur),
+
             longCol = 15,
-            longCol_Pseudo = 0, longCol_BestScore = 0, longCol_Difficulte = 0;
+            longCol_Pseudo = 0, longCol_BestScore = 0, longCol_Difficulte = 0,
 
-        for(int i=0; i<nbL-1; i++){
+            idx = 0;
 
-            // Calcul longueur pour colonne "PSEUDO"
+        String[][] stats = new String[nbL][3];
+        String[][] triStats = new String[nbL][3];
+
+        for(int i=0; i<nbL-1; i++){ // Calcul longueur
+
+            // pour colonne "PSEUDO"
             if(length(getCell(profilJoueur, i, 0) ) >= length(getCell(profilJoueur, i+1, 0) ) ){
                 longCol_Pseudo = length(getCell(profilJoueur, i, 0) );
             }
@@ -396,7 +402,7 @@ class LesDesDuSavoir extends Program{
                 longCol_Pseudo = length(getCell(profilJoueur, i+1, 0) );
             }
 
-            // Calcul longueur pour colonne "BEST_SCORE"
+            // pour colonne "BEST_SCORE"
             if(length(getCell(profilJoueur, i, 6) ) >= length(getCell(profilJoueur, i+1, 6) ) ){
                 longCol_BestScore = length(getCell(profilJoueur, i, 6) );
             }
@@ -404,7 +410,7 @@ class LesDesDuSavoir extends Program{
                 longCol_BestScore = length(getCell(profilJoueur, i+1, 6) );
             }
 
-            // Calcul ongueur pour colonne "DIFFICULTE"
+            // pour colonne "BEST_TOURS_JOUES"
             if(length(getCell(profilJoueur, i, 8) ) >= length(getCell(profilJoueur, i+1, 8) ) ){
                 longCol_Difficulte = length(getCell(profilJoueur, i, 8) );
             }
@@ -415,22 +421,55 @@ class LesDesDuSavoir extends Program{
 
         longCol += longCol_Pseudo + longCol_BestScore + longCol_Difficulte;
 
+        // Tri des données
+        for(int i=0; i<nbL; i++){
+            stats[i][0] = getCell(profilJoueur, i, 0);
+            stats[i][1] = getCell(profilJoueur, i, 6);
+            stats[i][2] = getCell(profilJoueur, i, 8);
+        }
+
+        String[][] chaine = new String[1][3];
+        for(int i=0; i<nbL; i++){
+            chaine[0][0] = stats[i][0]; 
+            chaine[0][1] = stats[i][1]; 
+            chaine[0][2] = stats[i][2];
+
+            for(int y=0; y<nbL; y++){
+                if(stringToInt(chaine[0][1]) >= stringToInt(stats[y][1]) ){
+                    if(stringToInt(chaine[0][1]) == stringToInt(stats[y][1])
+                    && stringToInt(chaine[0][2]) >= stringToInt(stats[y][2]) ){
+                        idx += 1;
+                    }
+                    if(stringToInt(chaine[0][1]) > stringToInt(stats[y][1]) ){
+                        idx += 1;
+                    }
+                }
+            }
+
+            triStats[(nbL-idx)][0] = chaine[0][0];
+            triStats[nbL-idx][1] = chaine[0][1];
+            triStats[nbL-idx][2] = chaine[0][2];
+
+            idx = 0;
+        }
+
+        // Affichage du Classement
         for(int i=0; i<longCol; i++){
-            print("_");
+            print("-");
         }
 
         println();
 
-        for(int l=1; l<=LARG; l++){
+        for(int l=0; l<LARG; l++){
             //for(int col=0; col<longCol; col++){
-                print("| " + l + ". " + " | " + " | " + " |");
+                print("| " + (l+1) + ". " + triStats[l][0] + " | " + triStats[l][1] + " | " + triStats[l][2] + " |");
             //}
 
             println();
         }
 
         for(int i=0; i<longCol; i++){
-            print("_");
+            print("-");
         }
 
         println();
