@@ -1,0 +1,32 @@
+        __________              .__                 
+        \______   \ ____   ____ |  |   ____   ______
+        |       _// __ \ / ___\|  | _/ __ \ /  ___/
+        |    |   \  ___// /_/  >  |_\  ___/ \___ \ 
+        |____|_  /\___  >___  /|____/\___  >____  >
+                \/     \/_____/           \/     \/ 
+
+
+
+
+            "Les Des du Savoir" est un jeu de plateau éducatif conceptualisé et réalisé par
+            les étudiants Atilla Tas et Paul Cancel de l'institut universitaire de
+            technologies de Lille.
+
+            Résumé :
+            Il s'agit d'un jeu de plateau dans lequel vous appuyez sur "Entrée" pour faire
+            avancer votre personnage comme si vous lanciez un dé à 6 faces. Sur votre 
+            chemin vous rencontrerez différentes épreuves sous le forme de questions
+            et de calcul dont vous devrez donner la réponse adéquate sous peine de perdre
+            du score et de la vie.
+
+            Précision :
+            Pour les questions de mathématique, la réponse sera sous la forme d'un entier
+            arrondi à l'inférieur (donc 0.9 et 0.1 deviendront toujours 0).
+            Les épreuves sous le format de questions, elles, seront sous la forme de
+            question à choix multiples il faudra donc entrer l'entier correspondant
+            à la bonne réponse.
+
+
+
+
+            
