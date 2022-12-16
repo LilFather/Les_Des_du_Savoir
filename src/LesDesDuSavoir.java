@@ -11,6 +11,7 @@ class LesDesDuSavoir extends Program{
 
     final int TAILLE_TABLEAU = 152;
     final double PROBA_EPREUVE = 0.33;
+    final String[] NOM_DIFFICULTE = new String[]{"FACILE", "MOYEN", "DIFFICLE"};
 
     int movement(){
         return (int) ((random()*6) +1);
@@ -262,13 +263,13 @@ class LesDesDuSavoir extends Program{
                 } 
             }
 
-            if(difficulte == 0){ // FACILE
+            if(difficulte == 1){ // FACILE
                 p.partie_facile = 1;
             }
-            else if(difficulte == 1){ // MOYEN
+            else if(difficulte == 2){ // MOYEN
                 p.partie_moyen = 1;
             }
-            else if(difficulte == 2){ // DIFFICILE
+            else if(difficulte == 3){ // DIFFICILE
                 p.partie_difficile = 1;
             }
 
@@ -296,13 +297,13 @@ class LesDesDuSavoir extends Program{
                     p.pseudo = pseudo;
 
                     p.nb_partie = 1 + stringToInt(getCell(profilJoueur, l, 1) );
-                    if(difficulte == 0){
+                    if(difficulte == 1){
                         p.partie_facile = 1 + stringToInt(getCell(profilJoueur, l, 2) );
                     }
-                    else if(difficulte == 1){
+                    else if(difficulte == 2){
                         p.partie_moyen = 1 + stringToInt(getCell(profilJoueur, l, 3) );
                     }
-                    else if(difficulte == 2){
+                    else if(difficulte == 3){
                         p.partie_difficile = 1 + stringToInt(getCell(profilJoueur, 1, 4) );
                     }
 
@@ -377,15 +378,36 @@ class LesDesDuSavoir extends Program{
         println("            Tour joués en une partie : " + playerStat[8]);
     }
 
-    void afficherClassement(){ // 3 colonnes: "PSEUDO" "BEST_SCORE" "DIFFICULTE"
+    String marge(int longCol_X, int longChaine){
+        String m = "";
+
+        for(int i=0; i<longCol_X-longChaine; i++){
+            m += " ";
+        }
+
+        return m;
+    }
+
+    String centrerText(int longLine, int longMot, String mot){
+        String marge = "";
+        int mid = (longLine - longMot) / 2;
+
+        for(int i=0; i<mid; i++){
+            marge += " ";
+        }
+
+        return marge + mot + marge;
+    }
+
+    void afficherClassement(){ // 3 colonnes: "PSEUDO" "BEST_SCORE" "BEST_TOURS_JOUES"
         final int LARG = 7; // Affichage du TOP 7
 
         CSVFile profilJoueur = loadCSV("save_profil.csv");
         int nbL = rowCount(profilJoueur),
             nbCol = columnCount(profilJoueur),
 
-            longCol = 15,
-            longCol_Pseudo = 0, longCol_BestScore = 0, longCol_Difficulte = 0,
+            longCol = 13,
+            longCol_Pseudo = 0, longCol_BestScore = 0, longCol_BestTourJoues = 0,
 
             idx = 0;
 
@@ -395,7 +417,7 @@ class LesDesDuSavoir extends Program{
         for(int i=0; i<nbL-1; i++){ // Calcul longueur
 
             // pour colonne "PSEUDO"
-            if(length(getCell(profilJoueur, i, 0) ) >= length(getCell(profilJoueur, i+1, 0) ) ){
+            if(length(getCell(profilJoueur, i, 0) ) > length(getCell(profilJoueur, i+1, 0) ) ){
                 longCol_Pseudo = length(getCell(profilJoueur, i, 0) );
             }
             else{
@@ -403,7 +425,7 @@ class LesDesDuSavoir extends Program{
             }
 
             // pour colonne "BEST_SCORE"
-            if(length(getCell(profilJoueur, i, 6) ) >= length(getCell(profilJoueur, i+1, 6) ) ){
+            if(length(getCell(profilJoueur, i, 6) ) > length(getCell(profilJoueur, i+1, 6) ) ){
                 longCol_BestScore = length(getCell(profilJoueur, i, 6) );
             }
             else{
@@ -411,15 +433,16 @@ class LesDesDuSavoir extends Program{
             }
 
             // pour colonne "BEST_TOURS_JOUES"
-            if(length(getCell(profilJoueur, i, 8) ) >= length(getCell(profilJoueur, i+1, 8) ) ){
-                longCol_Difficulte = length(getCell(profilJoueur, i, 8) );
+            if(length(getCell(profilJoueur, i, 8) ) > length(getCell(profilJoueur, i+1, 8) ) ){
+                longCol_BestTourJoues = length(getCell(profilJoueur, i, 8) );
             }
             else{
-                longCol_Difficulte = length(getCell(profilJoueur, i+1, 8) );
+                longCol_BestTourJoues = length(getCell(profilJoueur, i+1, 8) );
             }
         }
 
-        longCol += longCol_Pseudo + longCol_BestScore + longCol_Difficulte;
+        longCol_BestScore += 1;
+        longCol += longCol_Pseudo + longCol_BestScore + longCol_BestTourJoues;
 
         // Tri des données
         for(int i=0; i<nbL; i++){
@@ -437,7 +460,8 @@ class LesDesDuSavoir extends Program{
             for(int y=0; y<nbL; y++){
                 if(stringToInt(chaine[0][1]) >= stringToInt(stats[y][1]) ){
                     if(stringToInt(chaine[0][1]) == stringToInt(stats[y][1])
-                    && stringToInt(chaine[0][2]) >= stringToInt(stats[y][2]) ){
+                        && stringToInt(chaine[0][2]) >= stringToInt(stats[y][2]) ){
+
                         idx += 1;
                     }
                     if(stringToInt(chaine[0][1]) > stringToInt(stats[y][1]) ){
@@ -454,6 +478,11 @@ class LesDesDuSavoir extends Program{
         }
 
         // Affichage du Classement
+        println("              " + centrerText(longCol_Pseudo+3, length("PSEUDO"), "PSEUDO") + "   "
+            + centrerText(longCol_BestScore, length("SCORE"), "SCORE") + "   "
+            + centrerText(longCol_BestTourJoues, length("TOURS"), "TOURS") );
+
+        print("             ");
         for(int i=0; i<longCol; i++){
             print("-");
         }
@@ -462,12 +491,15 @@ class LesDesDuSavoir extends Program{
 
         for(int l=0; l<LARG; l++){
             //for(int col=0; col<longCol; col++){
-                print("| " + (l+1) + ". " + triStats[l][0] + " | " + triStats[l][1] + " | " + triStats[l][2] + " |");
+                print("             | " + (l+1) + ". " + triStats[l][0] +  marge(longCol_Pseudo, length(triStats[l][0]) ) + " | "
+                    + triStats[l][1] +  marge(longCol_BestScore, length(triStats[l][1]) ) + " | "
+                    + triStats[l][2] +  marge(longCol_BestTourJoues, length(triStats[l][2]) ) + " |");
             //}
 
             println();
         }
 
+        print("             ");
         for(int i=0; i<longCol; i++){
             print("-");
         }
@@ -570,9 +602,18 @@ class LesDesDuSavoir extends Program{
                         afficherListeJoueur();
 
                         println();
+                        println("            0 : Retour");
+                        println("\n\n\n");
+
                         print("Choisir le joueur : ");
                         int choixJoueur = readInt();
-                        pseudo = getJoueur(choixJoueur);
+                        
+                        if(choixJoueur == 0){
+                            choixProfil = -1;
+                        }
+                        else{
+                            pseudo = getJoueur(choixJoueur);
+                        }
                     }
                 }
 
@@ -600,10 +641,16 @@ class LesDesDuSavoir extends Program{
                     clearScreen();
                     println(toString(plateau));
                     println();
-                    println("           Joueur : " + pseudo);
-                    println("           Vies restantes : " + vies);
-                    println("           Tour : " + nb_tours);
-                    println("           Score : " + score);
+                    println("            Joueur : " + pseudo);
+                    println("            Difficulté : " + NOM_DIFFICULTE[difficulte-1]);
+                    if(vies == 1){
+                        println("            Vie restante : " + vies);
+                    }
+                    else{
+                        println("            Vies restantes : " + vies);
+                    }
+                    println("            Tour : " + nb_tours);
+                    println("            Score : " + score);
                     println();
                     mouv = movement();
                     nb_tours += 1;
@@ -730,12 +777,12 @@ class LesDesDuSavoir extends Program{
                     clearScreen();
                     afficherText("parametre.txt");
                     println();
-                    println("           1 : Modifier caractère joueur : "+joueur);
-                    println("           2 : Modifier caractère chemin : "+chemin);
-                    println("           3 : Modifier caractère épreuve : "+ epreuve);
-                    println("           4 : Modifier les couleurs");
+                    println("            1 : Modifier caractère joueur : "+joueur);
+                    println("            2 : Modifier caractère chemin : "+chemin);
+                    println("            3 : Modifier caractère épreuve : "+ epreuve);
+                    println("            4 : Modifier les couleurs");
                     println();
-                    println("           0 : Retour");
+                    println("            0 : Retour");
                     println();
                     println();
                     println();
