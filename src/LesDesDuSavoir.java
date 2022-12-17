@@ -414,35 +414,33 @@ class LesDesDuSavoir extends Program{
         String[][] stats = new String[nbL][3];
         String[][] triStats = new String[nbL][3];
 
-        for(int i=0; i<nbL-1; i++){ // Calcul longueur
+        for(int i=0; i<nbL; i++){ // Calcul longueur
 
             // pour colonne "PSEUDO"
-            if(length(getCell(profilJoueur, i, 0) ) > length(getCell(profilJoueur, i+1, 0) ) ){
+            if(length(getCell(profilJoueur, i, 0) ) > longCol_Pseudo){
                 longCol_Pseudo = length(getCell(profilJoueur, i, 0) );
-            }
-            else{
-                longCol_Pseudo = length(getCell(profilJoueur, i+1, 0) );
+
+                //println(longCol_Pseudo);
             }
 
             // pour colonne "BEST_SCORE"
-            if(length(getCell(profilJoueur, i, 6) ) > length(getCell(profilJoueur, i+1, 6) ) ){
+            if(length(getCell(profilJoueur, i, 6) ) > longCol_BestScore){
                 longCol_BestScore = length(getCell(profilJoueur, i, 6) );
-            }
-            else{
-                longCol_BestScore = length(getCell(profilJoueur, i+1, 6) );
+
+                //println(longCol_BestScore);
             }
 
             // pour colonne "BEST_TOURS_JOUES"
-            if(length(getCell(profilJoueur, i, 8) ) > length(getCell(profilJoueur, i+1, 8) ) ){
+            if(length(getCell(profilJoueur, i, 8) ) > longCol_BestTourJoues){
                 longCol_BestTourJoues = length(getCell(profilJoueur, i, 8) );
-            }
-            else{
-                longCol_BestTourJoues = length(getCell(profilJoueur, i+1, 8) );
+
+                //println(longCol_BestTourJoues);
             }
         }
 
-        longCol_BestScore += 1;
         longCol += longCol_Pseudo + longCol_BestScore + longCol_BestTourJoues;
+
+        //println(longCol);
 
         // Tri des données
         for(int i=0; i<nbL; i++){
@@ -490,11 +488,9 @@ class LesDesDuSavoir extends Program{
         println();
 
         for(int l=0; l<LARG; l++){
-            //for(int col=0; col<longCol; col++){
-                print("             | " + (l+1) + ". " + triStats[l][0] +  marge(longCol_Pseudo, length(triStats[l][0]) ) + " | "
-                    + triStats[l][1] +  marge(longCol_BestScore, length(triStats[l][1]) ) + " | "
-                    + triStats[l][2] +  marge(longCol_BestTourJoues, length(triStats[l][2]) ) + " |");
-            //}
+            print("             | " + (l+1) + ". " + triStats[l][0] +  marge(longCol_Pseudo, length(triStats[l][0]) ) + " | "
+                + triStats[l][1] +  marge(longCol_BestScore, length(triStats[l][1]) ) + " | "
+                + triStats[l][2] +  marge(longCol_BestTourJoues, length(triStats[l][2]) ) + " |");
 
             println();
         }
@@ -552,7 +548,7 @@ class LesDesDuSavoir extends Program{
         while(true){
             difficulte = -1; parametre = -1;
             choixProfil = -1; choixStat = -1; choixRanking = -1; pseudo = "";
-            nb_tours = 1; score = 0;
+            nb_tours = 1; score = 0; vies = 5;
             clearScreen();
             afficherText("savoir.txt");
             println();
@@ -716,19 +712,6 @@ class LesDesDuSavoir extends Program{
                         delay(2000);
                         saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
                         menu = -1;
-                    }
-                    if (vies == 0){
-                        clearScreen();
-                        afficherText("defaite.txt");
-                        println(toString(plateau));
-                        println();
-                        println("           Joueur : " + pseudo);
-                        println("           Tour : " + nb_tours);
-                        println("           Score : " + score);
-                        println();
-                        println("Sauvegarde en cours...");
-                        delay(2000);
-                        saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
                     }
                 }
             }
