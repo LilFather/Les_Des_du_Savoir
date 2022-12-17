@@ -715,6 +715,20 @@ class LesDesDuSavoir extends Program{
                         println("Sauvegarde en cours...");
                         delay(2000);
                         saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
+                        menu = -1;
+                    }
+                    if (vies == 0){
+                        clearScreen();
+                        afficherText("defaite.txt");
+                        println(toString(plateau));
+                        println();
+                        println("           Joueur : " + pseudo);
+                        println("           Tour : " + nb_tours);
+                        println("           Score : " + score);
+                        println();
+                        println("Sauvegarde en cours...");
+                        delay(2000);
+                        saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
                     }
                 }
             }
