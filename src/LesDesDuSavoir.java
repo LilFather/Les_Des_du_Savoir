@@ -613,7 +613,7 @@ class LesDesDuSavoir extends Program{
                     }
                 }
 
-                while(!difficulteValide(difficulte)){
+                while(!difficulteValide(difficulte) && choixProfil != 0){
                     clearScreen();
                     afficherText("difficulte.txt");
                     /*
