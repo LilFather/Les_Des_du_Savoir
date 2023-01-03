@@ -2,10 +2,10 @@
 
 
             1 : Nouvelle partie
-            2 : Reprendre une partie en cours
-            3 : Statistiques
-            4 : Classement
-            5 : Paramètres
+            2 : Statistiques
+            3 : Classement
+            4 : Paramètres
+            5 : Règles
 
             0 : Quitter
 
