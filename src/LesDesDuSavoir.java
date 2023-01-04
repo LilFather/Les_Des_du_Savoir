@@ -80,18 +80,33 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    int epreuveMath(int difficulte){
-        int nb1 = 0;
-        int nb2 = 0;
-        double res = 0.0;
+    boolean doEpreuve(int difficulte){
         double proba = random();
+
+        if(proba < 0.5){
+            return epreuveMath(difficulte);
+        }
+        else{
+            return epreuveQuestion(difficulte);
+        }
+    }
+
+    boolean epreuveMath(int difficulte){
+        int nb1 = 0,
+            nb2 = 0,
+            res = 0,
+            reponse = 0;
+        double proba = random();
+
         if (difficulte == 3){
             nb1 = (int) (random()*1000);
             nb2 = (int) (random()*1000);
-        } else if (difficulte == 2){
+        }
+        else if (difficulte == 2){
             nb1 = (int) (random()*100);
             nb2 = (int) (random()*100);
-        } else {
+        }
+        else {
             nb1 = (int) (random()*10);
             nb2 = (int) (random()*10);     
         }
@@ -100,30 +115,76 @@ class LesDesDuSavoir extends Program{
             text(couleur_epreuve);
             println("           "+nb1+"/"+(nb2 + 1));
             text(couleur_base);
-            return (nb1/(nb2+1));
-        }else if (proba<0.5){
+
+            res = (nb1/(nb2+1));
+        }
+        else if (proba<0.5){
             text(couleur_epreuve);
             println("           "+nb1+"*"+nb2);
             text(couleur_base);
-            return (nb1*nb2);
-        }else if (proba<0.75){
+
+            res = (nb1*nb2);
+        }
+        else if (proba<0.75){
             text(couleur_epreuve);
             println("           "+nb1+"+"+nb2);
             text(couleur_base);
-            return (nb1+nb2);
-        }else{
+
+            res = (nb1+nb2);
+        }
+        else{
             text(couleur_epreuve);
             println("           "+nb1+"-"+nb2);
             text(couleur_base);
-            return (nb1-nb2);
+
+            res = (nb1-nb2);
+        }
+
+        println();
+        print("Entrez une réponse : ");
+        reponse = readInt();
+        println();
+
+        if (!testerResultat(res , reponse)){
+            println("Mauvaise réponse, c'était " + res);
+
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    boolean epreuveQuestion(int difficulte){
+        CSVFile question = loadCSV("epreuve_question.csv");
+
+        int nbL = rowCount(question),
+            nbCol = columnCount(question),
+            choixQ = (int)(random() * 10 + 1);
+
+        if(difficulte == 3){
+            text(couleur_epreuve);
+            println("           " + getCell(question, choixQ, 0) );
+            println("           " + "1 - " + getCell(question, choixQ, 2));
+            println("           " + "2 - " + getCell(question, choixQ, 4));
+            println("           " + "3 - " + getCell(question, choixQ, 1));
+            println("           " + "4 - " + getCell(question, choixQ, 3));
+            println("           " + "5 - " + getCell(question, choixQ, 5));
+            text(couleur_base);
+        }
+        else if(difficulte == 2){
+
+        }
+        else{
+
         }
     }
 
     int scoreMultiplieur(int difficulte){
-        if(difficulte == 2){
+        if(difficulte == 3){
             return 9;
         }
-        else if(difficulte == 1){
+        else if(difficulte == 2){
             return 3;
         }
         else{
@@ -131,7 +192,7 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    boolean testerResultatMath(int res, int reponse){
+    boolean testerResultat(int res, int reponse){
         return (res==reponse);
     }
 
@@ -468,7 +529,7 @@ class LesDesDuSavoir extends Program{
                 }
             }
 
-            triStats[(nbL-idx)][0] = chaine[0][0];
+            triStats[nbL-idx][0] = chaine[0][0];
             triStats[nbL-idx][1] = chaine[0][1];
             triStats[nbL-idx][2] = chaine[0][2];
 
@@ -538,10 +599,11 @@ class LesDesDuSavoir extends Program{
         afficherText("fixage.txt"); couleur_base = "white";
         reset();
         int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1;
-        int choixProfil = -1; String pseudo = ""; int choixStat = -1; int choixRanking = -1;
+        int choixProfil = -1, choixStat = -1, choixRanking = -1;
+        String pseudo = "";
         int case_actuelle = 0; String quit = "";
         int mouv = 0, nb_tours = 1;
-        int res_epreuve_math = 0; int reponse_math = 0;
+        int reponse_math = 0;
         int vies = 5; int menu = -1; int score = 0;
         Cases[] plateau = new Cases[TAILLE_TABLEAU];
 
@@ -652,20 +714,16 @@ class LesDesDuSavoir extends Program{
                     nb_tours += 1;
 
                     if (plateau[prochaineCase(case_actuelle,mouv)] == Cases.EPREUVE){
-                        res_epreuve_math = epreuveMath(difficulte);
-                        println();
-                        print("Entrez une réponse : ");
-                        reponse_math = readInt();
-                        println();
-
-                        if (!testerResultatMath(res_epreuve_math , reponse_math)){
-                            println("Mauvaise réponse, c'était " +res_epreuve_math);
+                        if(!doEpreuve(difficulte)){
                             vies -= 1;
                             score -= scoreMultiplieur(difficulte) + 100;
+
                             println();
-                        }else{
+                        }
+                        else{
                             println("Bonne réponse");
                             score += ( mouv + scoreMultiplieur(difficulte) ) + 100; 
+
                             println();
                         }
                     }
@@ -738,14 +796,12 @@ class LesDesDuSavoir extends Program{
 
                         afficherPlayerStat(getPlayerStat(choixStat) );
                         println("\n\n\n");
-                        println("            0 : Retour");
+                        //println("            0 : Retour");
                         println("\n\n\n");
 
-                        print("Entrez un entier valide : ");
-                        choixStat = readInt();
-                        if(choixStat == 0){
-                            menu = 2;
-                        }
+                        print("Mettez \"Entrée\" pour retourner au menu : ");
+                        readString();
+                        menu = 2;                       
                     }
                 }
 
