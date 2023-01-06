@@ -1,1 +1,1 @@
-enum Cases {JOUEUR, CHEMIN, EPREUVE}
+enum Cases {JOUEUR, CHEMIN, EPREUVE, BONUS}

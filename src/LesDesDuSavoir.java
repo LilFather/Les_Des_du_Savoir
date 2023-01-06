@@ -5,12 +5,14 @@ class LesDesDuSavoir extends Program{
     char joueur = 'J';
     char chemin = '_';
     char epreuve = '?';
+    // LANG langue = LANG.FR;
+
 
     String couleur_epreuve = "red";
     String couleur_base = "white";
 
     final int TAILLE_TABLEAU = 152;
-    final double PROBA_EPREUVE = 0.33;
+    final double PROBA_EPREUVE = 0.33; double PROBA_BONUS = 0.0;
     final String[] NOM_DIFFICULTE = new String[]{"FACILE", "MOYEN", "DIFFICLE"};
 
     int movement(){
@@ -50,6 +52,8 @@ class LesDesDuSavoir extends Program{
 
     void deplacerJoueur(Cases[] plateau , int case_actuelle, int prochaine){
         Cases tmp = plateau[prochaine];
+        println(plateau[case_actuelle]);
+        println(tmp);
         plateau[prochaine] = Cases.JOUEUR;
         plateau[case_actuelle] = tmp;
     }
@@ -68,11 +72,11 @@ class LesDesDuSavoir extends Program{
     }
 */
     String jouerTour(Cases[] plateau, int case_actuelle, int prochaine){
-        println("Veuillez lancer le dé en appuyant sur \"Entrée\" ou entrer \"quitter\" pour quitter");
+        println("Veuillez lancer le dé en appuyant sur \"Entrée\", entrer \"quitter\" pour quitter et \"inventaire\" pour accéder à votre inventaire ");
         String res = readString();
         int resultat = 0;
-        if (equals(res ,"quitter")){
-            deplacerJoueur(plateau , case_actuelle , prochaine);
+        if (equals(res ,"quitter") || equals(res,"inventaire")){
+            deplacerJoueur(plateau , case_actuelle , case_actuelle);
             return res;
         } else {
             deplacerJoueur(plateau , case_actuelle , prochaine);
@@ -80,33 +84,18 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    boolean doEpreuve(int difficulte){
+    int epreuveMath(int difficulte){
+        int nb1 = 0;
+        int nb2 = 0;
+        double res = 0.0;
         double proba = random();
-
-        if(proba < 0.5){
-            return epreuveMath(difficulte);
-        }
-        else{
-            return epreuveQuestion(difficulte);
-        }
-    }
-
-    boolean epreuveMath(int difficulte){
-        int nb1 = 0,
-            nb2 = 0,
-            res = 0,
-            reponse = 0;
-        double proba = random();
-
         if (difficulte == 3){
             nb1 = (int) (random()*1000);
             nb2 = (int) (random()*1000);
-        }
-        else if (difficulte == 2){
+        } else if (difficulte == 2){
             nb1 = (int) (random()*100);
             nb2 = (int) (random()*100);
-        }
-        else {
+        } else {
             nb1 = (int) (random()*10);
             nb2 = (int) (random()*10);     
         }
@@ -115,76 +104,30 @@ class LesDesDuSavoir extends Program{
             text(couleur_epreuve);
             println("           "+nb1+"/"+(nb2 + 1));
             text(couleur_base);
-
-            res = (nb1/(nb2+1));
-        }
-        else if (proba<0.5){
+            return (nb1/(nb2+1));
+        }else if (proba<0.5){
             text(couleur_epreuve);
             println("           "+nb1+"*"+nb2);
             text(couleur_base);
-
-            res = (nb1*nb2);
-        }
-        else if (proba<0.75){
+            return (nb1*nb2);
+        }else if (proba<0.75){
             text(couleur_epreuve);
             println("           "+nb1+"+"+nb2);
             text(couleur_base);
-
-            res = (nb1+nb2);
-        }
-        else{
+            return (nb1+nb2);
+        }else{
             text(couleur_epreuve);
             println("           "+nb1+"-"+nb2);
             text(couleur_base);
-
-            res = (nb1-nb2);
-        }
-
-        println();
-        print("Entrez une réponse : ");
-        reponse = readInt();
-        println();
-
-        if (!testerResultat(res , reponse)){
-            println("Mauvaise réponse, c'était " + res);
-
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-
-    boolean epreuveQuestion(int difficulte){
-        CSVFile question = loadCSV("epreuve_question.csv");
-
-        int nbL = rowCount(question),
-            nbCol = columnCount(question),
-            choixQ = (int)(random() * 10 + 1);
-
-        if(difficulte == 3){
-            text(couleur_epreuve);
-            println("           " + getCell(question, choixQ, 0) );
-            println("           " + "1 - " + getCell(question, choixQ, 2));
-            println("           " + "2 - " + getCell(question, choixQ, 4));
-            println("           " + "3 - " + getCell(question, choixQ, 1));
-            println("           " + "4 - " + getCell(question, choixQ, 3));
-            println("           " + "5 - " + getCell(question, choixQ, 5));
-            text(couleur_base);
-        }
-        else if(difficulte == 2){
-
-        }
-        else{
-
+            return (nb1-nb2);
         }
     }
 
     int scoreMultiplieur(int difficulte){
-        if(difficulte == 3){
+        if(difficulte == 2){
             return 9;
         }
-        else if(difficulte == 2){
+        else if(difficulte == 1){
             return 3;
         }
         else{
@@ -192,7 +135,7 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    boolean testerResultat(int res, int reponse){
+    boolean testerResultatMath(int res, int reponse){
         return (res==reponse);
     }
 
@@ -529,7 +472,7 @@ class LesDesDuSavoir extends Program{
                 }
             }
 
-            triStats[nbL-idx][0] = chaine[0][0];
+            triStats[(nbL-idx)][0] = chaine[0][0];
             triStats[nbL-idx][1] = chaine[0][1];
             triStats[nbL-idx][2] = chaine[0][2];
 
@@ -595,27 +538,136 @@ class LesDesDuSavoir extends Program{
         return (quitter>=0 && quitter <= 2);
     }
 
+    boolean inventaireValide(int inv , BONUS []inventaire){
+        return (inv>= 0 && inv <= nbBonusInventaire(inventaire));
+    }
+
+    double bonus_difficulte(int difficulte){
+        if(difficulte==1){
+            return 0.4;
+        }else if(difficulte==2){
+            return 0.2;
+        }else{
+            return 0.01;
+        }
+    }
+    
+    int nbBonusInventaire(BONUS[] inventaire){
+        int res = 0;
+        int len = length(inventaire);
+        for(int i=0;i<len;i++){
+            if (inventaire[i]!=null){
+                res += 1;
+            }
+        }
+        return res;
+    }
+    BONUS selectionBonus(){
+        double tmp = random();
+        if (tmp<0.2){
+            return BONUS.AsDeCoeur;
+        }else if(tmp<0.4){
+            return BONUS.AsDeCarreau;
+        }else if(tmp<0.6){
+            return BONUS.AsDePic;
+        }else if(tmp<0.8){
+            return BONUS.AsDeTrefle;
+        }else{
+            return BONUS.ValetDeTrefle;
+        }
+    }
+
+    BONUS[] creerInventaireVide(int taille){
+        BONUS[] inventaire = new BONUS[taille];
+        return inventaire;
+    }
+    String toStringBonus(BONUS bonus){
+        if (bonus==BONUS.AsDeCoeur){
+            return "As de Coeur";
+        } else if (bonus==BONUS.AsDeCarreau){
+            return "As de Carreau";
+        }else if (bonus==BONUS.AsDePic){
+            return "As de Pic";
+        }else if (bonus==BONUS.AsDeTrefle){
+            return "As de Trefle";
+        }else if (bonus==BONUS.ValetDeTrefle){
+            return "Valet de Trefle";
+        }else{
+            return "#ERR0R(paul corrige ça c'est pas sérieux frérot tkt j'te trust";
+        }
+    }
+    String afficherInventaire(BONUS[] inventaire){
+        String res = "";
+        int len = length(inventaire);
+        for(int i=0;i<len;i++){
+            if (inventaire[i]==BONUS.AsDeCoeur){
+                res += "             "+(i+1) + " : As de Coeur \n";
+            } else if (inventaire[i]==BONUS.AsDeCarreau){
+                res += "             "+(i+1) + " : As de Carreau \n";
+            }else if (inventaire[i]==BONUS.AsDePic){
+                res += "             "+(i+1) + " : As de Pic \n";
+            }else if (inventaire[i]==BONUS.AsDeTrefle){
+                res += "             "+(i+1) + " : As de Trefle \n";
+            }else if (inventaire[i]==BONUS.ValetDeTrefle){
+                res += "             "+(i+1) + " : Valet de Trefle \n";
+            }
+        }
+        if (inventaire[0]==null){
+            println("            Votre inventaire est vide, quel dommage (sarcasme)...");
+        }
+        return res;
+    }
+
+    BONUS [] inventaireDecalage(BONUS [] inventaire){
+        int len = length(inventaire);int cpt=0;
+        BONUS [] res = new BONUS[len];
+        for (int i=0;i<len;i++){
+            if (inventaire[i]!=null){
+                res[cpt] = inventaire[i];
+                cpt+= 1;
+            }
+        }
+        return res;
+    }
+
+    boolean inventairePlein(BONUS[] inventaire){
+        return (inventaire[length(inventaire)-1] != null);
+    }
+
+    void ajouterBonus(BONUS [] inventaire, BONUS bonus){
+        int i = 0; int len = length(inventaire);
+        while(inventaire[i]!=null){
+            i+=1;
+        }
+        inventaire[i]=bonus;
+    }
+    void enleverBonus(BONUS[] inventaire, int choix){
+        inventaire[choix]=null;
+        inventaireDecalage(inventaire);
+    }
+
     void algorithm(){
-        afficherText("fixage.txt"); couleur_base = "white";
+        afficherText("fixage.txt"); couleur_base = "white"; couleur_epreuve = "red";
         reset();
-        int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1;
-        int choixProfil = -1, choixStat = -1, choixRanking = -1;
-        String pseudo = "";
-        int case_actuelle = 0; String quit = "";
-        int mouv = 0, nb_tours = 1;
-        int reponse_math = 0;
+        int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1; int inventaire_menu = -1;
+        int choixProfil = -1; String pseudo = ""; int choixStat = -1; int choixRanking = -1;
+        int case_actuelle = 0; String choixTour = "";
+        int mouv = 0, nb_tours = 1; int regle = 1;
+        int res_epreuve_math = 0; int reponse_math = 0;
         int vies = 5; int menu = -1; int score = 0;
-        Cases[] plateau = new Cases[TAILLE_TABLEAU];
+        Cases[] plateau = new Cases[TAILLE_TABLEAU]; boolean carreau = false; boolean pic = false; BONUS bonusChoisi=BONUS.Rien; int multicarreau = 1;
+        double multitrefle = 1.0; boolean trefle = false; BONUS newBonus = BONUS.Rien; boolean epreuveProchaine = false;
+        int tailleInventaire = 5; BONUS[] inventaire = creerInventaireVide(tailleInventaire);
 
         while(true){
-            difficulte = -1; parametre = -1;
+            difficulte = -1; parametre = -1;epreuveProchaine = false; regle = 1;
             choixProfil = -1; choixStat = -1; choixRanking = -1; pseudo = "";
-            nb_tours = 1; score = 0; vies = 5;
+            nb_tours = 1; score = 0; vies = 5; multitrefle=1; carreau = false; pic = false; trefle=false;
             clearScreen();
             afficherText("savoir.txt");
             println();
             /*println("1 : Nouvelle partie");
-            println("2 : Reprendre une partie en cours");
+            println("2 : Reprendre une partie en cours");objet
             println("3 : Paramètres");
             println();
             println("0 : Quitter");
@@ -630,7 +682,7 @@ class LesDesDuSavoir extends Program{
 
             if (menu == 1){
                 plateau = creerPlateau(TAILLE_TABLEAU , case_actuelle);
-
+                inventaire = creerInventaireVide(tailleInventaire);
                 while(!choixProfilValide(choixProfil)){
                     clearScreen();
                     afficherText("creerjoueurmenu.txt");
@@ -693,9 +745,9 @@ class LesDesDuSavoir extends Program{
                         menu = -1;
                     }
                 }    
-
+                PROBA_BONUS = bonus_difficulte(difficulte);
                 while(menu==1){
-                    quitter_menu = -1; quit = "";
+                    quitter_menu = -1; choixTour = "";newBonus= BONUS.Rien;
                     clearScreen();
                     println(toString(plateau));
                     println();
@@ -713,22 +765,94 @@ class LesDesDuSavoir extends Program{
                     mouv = movement();
                     nb_tours += 1;
 
-                    if (plateau[prochaineCase(case_actuelle,mouv)] == Cases.EPREUVE){
-                        if(!doEpreuve(difficulte)){
-                            vies -= 1;
-                            score -= scoreMultiplieur(difficulte) + 100;
-
-                            println();
+                    if (epreuveProchaine && !pic && (!equals(choixTour, "quitter") || !equals(choixTour, "inventaire"))){
+                        if (carreau){
+                            multicarreau = nb_tours;
+                            carreau = false;
                         }
-                        else{
+                        if (trefle){
+                            multitrefle = multitrefle *1.2;
+                            trefle = false;
+                        }
+                        res_epreuve_math = epreuveMath(difficulte);
+                        println();
+                        print("Entrez une réponse : ");
+                        reponse_math = readInt();
+                        println();
+
+                        if (!testerResultatMath(res_epreuve_math , reponse_math)){
+                            println("Mauvaise réponse, c'était " +res_epreuve_math);
+
+                            if(random()<PROBA_BONUS){
+                                vies -= 1;
+                                score -= scoreMultiplieur(difficulte)*multicarreau *multitrefle+ 100;
+                                println("Il s'agissait d'un bonus mais vous ne l'aurez pas...");
+
+                            }else{
+                                vies -= 1;
+                                score -= scoreMultiplieur(difficulte)*multicarreau *multitrefle+ 100;
+                                println();
+                            }
+
+                        }else{
                             println("Bonne réponse");
-                            score += ( mouv + scoreMultiplieur(difficulte) ) + 100; 
 
-                            println();
+                            if(random()<PROBA_BONUS){
+                                score += ( mouv + scoreMultiplieur(difficulte)*multicarreau*multitrefle ) + 100;
+                                newBonus = selectionBonus();
+
+                                if (!inventairePlein(inventaire)){
+                                    ajouterBonus(inventaire, newBonus);
+                                    println();
+                                    println("Vous ajoutez "+ toStringBonus(newBonus)+" à votre inventaire !");
+                                    println();
+                                    println();
+                                }else{
+                                    clearScreen();
+                                    afficherText("inventaire.txt");
+
+                                    println("Votre inventaire est plein veuillez utiliser un bonus");
+                                    println();
+                                    println(afficherInventaire(inventaire));
+                                    println();
+                                    
+                                    while(!inventaireValide(inventaire_menu,inventaire) && inventaire_menu!=0){
+                                        println();
+                                        print("Veuillez choisir un bonus à échanger avec "+toStringBonus(newBonus)+" : ");
+                                        inventaire_menu = readInt();
+                                    }
+                                    bonusChoisi = inventaire[inventaire_menu-1];
+                                    enleverBonus(inventaire , inventaire_menu-1);
+                                    if(bonusChoisi!=BONUS.Rien){
+                                        if (bonusChoisi==BONUS.AsDeCoeur){
+                                            vies += 1;
+                                        } else if(bonusChoisi==BONUS.AsDeCarreau){
+                                            carreau = true;
+                                        }else if(bonusChoisi==BONUS.AsDePic){
+                                            pic = true;
+                                        }else if(bonusChoisi==BONUS.AsDeTrefle){
+                                            trefle = true;
+                                        }else if(bonusChoisi==BONUS.ValetDeTrefle){
+                                            score=score/2;
+                                        }
+                                        bonusChoisi=BONUS.Rien;
+                                    }
+                                    inventaire_menu = -1;
+                                }
+                            }else{
+                                score += ( mouv + scoreMultiplieur(difficulte)*multicarreau*multitrefle ) + 100; 
+                                println();
+                            }
                         }
+                        multicarreau = 1;pic = false;
                     }
-                    quit = jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
-                    while (equals(quit, "quitter") && !valide_quitter(quitter_menu)){
+                    epreuveProchaine = (plateau[prochaineCase(case_actuelle,mouv)] == Cases.EPREUVE);
+                    choixTour = jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
+                    println(case_actuelle);
+                    if(!equals(choixTour,"quitter") && !equals(choixTour, "inventaire")){
+                        case_actuelle=prochaineCase(case_actuelle,mouv);
+                    }
+                    while ((equals(choixTour, "quitter") )&& !valide_quitter(quitter_menu)){
                         clearScreen();
                         afficherText("quitter_partie.txt");
                         /*
@@ -749,14 +873,49 @@ class LesDesDuSavoir extends Program{
                             println("Sauvegarde effectuée !");
                             delay(1500);
                             case_actuelle = 0;
-                            menu = -1;
-                        }
-                        else if (quitter_menu == 0){
+                            menu = -1;                        println();
+                        }else if (quitter_menu == 0){
                             quitter_menu = -1;
-                            quit = "";
+                            choixTour = "";
                         }
                     }
-                    case_actuelle=prochaineCase(case_actuelle,mouv);
+                    while ((equals(choixTour, "inventaire") )&& !inventaireValide(inventaire_menu, inventaire)){
+                        clearScreen();
+                        afficherText("inventaire.txt");
+                        println(afficherInventaire(inventaire));
+                        println();
+                        println("            0 : Retour");
+                        println();
+                        print("Entrez un entier valide pour utiliser un bonus : ");
+                        inventaire_menu = readInt();
+
+                        if (inventaire_menu == 0){
+                            inventaire_menu = -1;
+                            choixTour = "";
+                        }else if (inventaireValide(inventaire_menu, inventaire)){
+                            bonusChoisi = inventaire[inventaire_menu-1];
+                            enleverBonus(inventaire , inventaire_menu-1);
+                            choixTour ="";
+                        }
+                    }
+                    if(bonusChoisi!=BONUS.Rien){
+                        if (bonusChoisi==BONUS.AsDeCoeur){
+                            vies += 1;
+                        } else if(bonusChoisi==BONUS.AsDeCarreau){
+                            carreau = true;
+                        }else if(bonusChoisi==BONUS.AsDePic){
+                            pic = true;
+                        }else if(bonusChoisi==BONUS.AsDeTrefle){
+                            trefle = true;
+                        }else if(bonusChoisi==BONUS.ValetDeTrefle){
+                            score=score/2;
+                        }
+                        bonusChoisi=BONUS.Rien;
+                    }
+                    inventaire_menu = -1;
+                    
+
+
                     if (vies == 0){
                         clearScreen();
                         afficherText("defaite.txt");
@@ -796,12 +955,14 @@ class LesDesDuSavoir extends Program{
 
                         afficherPlayerStat(getPlayerStat(choixStat) );
                         println("\n\n\n");
-                        //println("            0 : Retour");
+                        println("            0 : Retour");
                         println("\n\n\n");
 
-                        print("Mettez \"Entrée\" pour retourner au menu : ");
-                        readString();
-                        menu = 2;                       
+                        print("Entrez un entier valide : ");
+                        choixStat = readInt();
+                        if(choixStat == 0){
+                            menu = 2;
+                        }
                     }
                 }
 
@@ -886,6 +1047,7 @@ class LesDesDuSavoir extends Program{
                                 couleur = -1;
                             } else if (couleur == 1){
                                 couleur_base = "red";
+                                couleur_epreuve = "blue";
                                 text(couleur_base);
                                 background("black");
                                 couleur = -1;
@@ -914,10 +1076,20 @@ class LesDesDuSavoir extends Program{
                     }
                 }
             }else if(menu == 5){
-                clearScreen();
-                afficherText("regle.txt");
-                print("Mettez \"Entrée\" pour retourner au menu : ");
-                readString();
+                //print("Mettez \"Entrée\" pour retourner au menu : ");
+                while(regle!=0){
+                    if (regle==1){
+                        clearScreen();
+                        afficherText("regle.txt");
+                        print("Entrez un entier valide : ");
+                        regle = readInt();
+                    }else if(regle==2){
+                        clearScreen();
+                        afficherText("regles2.txt");
+                        print("Entrez un entier valide : ");
+                        regle = readInt();
+                    }
+                }
                 menu = -1;
             }
             
