@@ -15,23 +15,23 @@ class LesDesDuSavoir extends Program{
 
     final double PROBA_EPREUVE = 0.33; double PROBA_BONUS = 0.0;
 
-    final String FIXAGE = "fixage.txt";
-    final String TITLE = "savoir.txt";
-    final String MAIN_MENU = "menu.txt";
-    final String MENU_DIFFICULTE = "difficulte.txt";
-    final String MENU_JOUEUR = "creerjoueurmenu.txt";
-    final String MENU_INVENTAIRE = "inventaire.txt";
-    final String MENU_QUITTER = "quitter_partie.txt";
-    final String MENU_STATISTIQUES = "statistique.txt";
-    final String MENU_CLASSEMENT = "classement.txt";
-    final String MENU_PARAMETRE = "parametre.txt";
-    final String MENU_COULEUR = "couleurs.txt";
-    final String MENU_REGLE_1 = "regle.txt";
-    final String MENU_REGLE_2 = "regle2.txt";
-    final String DEFAITE = "defaite.txt";
+    final String FIXAGE = "../ressources/fixage.txt";
+    final String TITLE = "../ressources/savoir.txt";
+    final String MAIN_MENU = "../ressources/menu.txt";
+    final String MENU_DIFFICULTE = "../ressources/difficulte.txt";
+    final String MENU_JOUEUR = "../ressources/creerjoueurmenu.txt";
+    final String MENU_INVENTAIRE = "../ressources/inventaire.txt";
+    final String MENU_QUITTER = "../ressources/quitter_partie.txt";
+    final String MENU_STATISTIQUES = "../ressources/statistique.txt";
+    final String MENU_CLASSEMENT = "../ressources/classement.txt";
+    final String MENU_PARAMETRE = "../ressources/parametre.txt";
+    final String MENU_COULEUR = "../ressources/couleurs.txt";
+    final String MENU_REGLE_1 = "../ressources/regle.txt";
+    final String MENU_REGLE_2 = "../ressources/regle2.txt";
+    final String DEFAITE = "../ressources/defaite.txt";
 
-    final String SAVE_PROFIL = "save_profil.csv";
-    final String QUESTION_EPREUVE = "list_question.csv";
+    final String SAVE_PROFIL = "../ressources/save_profil.csv";
+    final String QUESTION_EPREUVE = "../ressources/list_question.csv";
 
 
     final String[] NOM_DIFFICULTE = new String[]{"FACILE", "MOYEN", "DIFFICLE"};
