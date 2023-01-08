@@ -15,6 +15,7 @@ class LesDesDuSavoir extends Program{
 
     final double PROBA_EPREUVE = 0.33; double PROBA_BONUS = 0.0;
 
+    /*
     final String FIXAGE = "../ressources/fixage.txt";
     final String TITLE = "../ressources/savoir.txt";
     final String MAIN_MENU = "../ressources/menu.txt";
@@ -32,7 +33,24 @@ class LesDesDuSavoir extends Program{
 
     final String SAVE_PROFIL = "../ressources/save_profil.csv";
     final String QUESTION_EPREUVE = "../ressources/list_question.csv";
+    */
+    final String FIXAGE = "fixage.txt";
+    final String TITLE = "savoir.txt";
+    final String MAIN_MENU = "menu.txt";
+    final String MENU_DIFFICULTE = "difficulte.txt";
+    final String MENU_JOUEUR = "creerjoueurmenu.txt";
+    final String MENU_INVENTAIRE = "inventaire.txt";
+    final String MENU_QUITTER = "quitter_partie.txt";
+    final String MENU_STATISTIQUES = "statistique.txt";
+    final String MENU_CLASSEMENT = "classement.txt";
+    final String MENU_PARAMETRE = "parametre.txt";
+    final String MENU_COULEUR = "couleurs.txt";
+    final String MENU_REGLE_1 = "regle.txt";
+    final String MENU_REGLE_2 = "regle2.txt";
+    final String DEFAITE = "defaite.txt";
 
+    final String SAVE_PROFIL = "save_profil.csv";
+    final String QUESTION_EPREUVE = "list_question.csv";
 
     final String[] NOM_DIFFICULTE = new String[]{"FACILE", "MOYEN", "DIFFICLE"};
 
@@ -186,17 +204,22 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
 
         int nbL = rowCount(question),
             nbCol = columnCount(question),
-            choixQ = (int)(random() * nbL),
+            choixQ = (int)(random() * (nbL-1) + 1),
             choixR = 0,
             idx = 0,
             res = 0,
             reponse = 0;
 
-        if(difficulte == 3){
-            int[] tabInit = new int[]{1,2,3,4,5},
-                tabMel = new int[]{-1,-1,-1,-1,-1};
+        int[] tabInit = new int[]{1,2,3,4,5};
 
-            for(int i=0; i<length(tabMel); i++){
+        text(couleur_epreuve);
+        println(choixQ);
+        println("           " + getCell(question, choixQ, 0) ); // Affiche la question
+
+        if(difficulte == 3){ // DIFFICILE
+            int[] tabMel = new int[]{-1,-1,-1,-1,-1};
+
+            for(int i=0; i<length(tabMel); i++){ // Mélange aléatoirement les réponses
                 choixR = (int) (random() * length(tabMel));
 
                 while(tabMel[choixR] != -1){
@@ -209,20 +232,15 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 tabMel[choixR] = tabInit[i];
             }
 
-            text(couleur_epreuve);
-            println("           " + getCell(question, choixQ, 0) );
-            println("           " + 1 +" - " + getCell(question, choixQ, tabMel[0]) );
-            println("           " + 2 +" - " + getCell(question, choixQ, tabMel[1]) );
-            println("           " + 3 +" - " + getCell(question, choixQ, tabMel[2]) );
-            println("           " + 4 +" - " + getCell(question, choixQ, tabMel[3]) );
-            println("           " + 5 +" - " + getCell(question, choixQ, tabMel[4]) );
+            for(int i=0; i<5; i++){ // Affiche les différentes réponses possible
+                println("           " + (i+1) + " - " + getCell(question, choixQ, tabMel[i]) );
+            }
             text(couleur_base);
 
             res = idx+1;
         }
-        else if(difficulte == 2){
-            int[] tabInit = new int[]{1,2,3,4,5},
-                tabMel = new int[]{-1,-1,-1,-1};
+        else if(difficulte == 2){ // MOYEN
+            int[] tabMel = new int[]{-1,-1,-1,-1};
 
             for(int i=0; i<length(tabMel); i++){
                 choixR = (int) (random() * length(tabMel));
@@ -237,19 +255,15 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 tabMel[choixR] = tabInit[i];
             }
 
-            text(couleur_epreuve);
-            println("           " + getCell(question, choixQ, 0) );
-            println("           " + 1 +" - " + getCell(question, choixQ, tabMel[0]) );
-            println("           " + 2 +" - " + getCell(question, choixQ, tabMel[1]) );
-            println("           " + 3 +" - " + getCell(question, choixQ, tabMel[2]) );
-            println("           " + 4 +" - " + getCell(question, choixQ, tabMel[3]) );
+            for(int i=0; i<4; i++){ // Affiche les différentes réponses possible
+                println("           " + (i+1) + " - " + getCell(question, choixQ, tabMel[i]) );
+            }
             text(couleur_base);
 
             res = idx+1;
         }
-        else{
-            int[] tabInit = new int[]{1,2,3,4,5},
-                tabMel = new int[]{-1,-1,-1};
+        else{ // FACILE
+            int[] tabMel = new int[]{-1,-1,-1};
 
             for(int i=0; i<length(tabMel); i++){
                 choixR = (int) (random() * length(tabMel));
@@ -264,11 +278,9 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 tabMel[choixR] = tabInit[i];
             }
 
-            text(couleur_epreuve);
-            println("           " + getCell(question, choixQ, 0) );
-            println("           " + 1 +" - " + getCell(question, choixQ, tabMel[0]) );
-            println("           " + 2 +" - " + getCell(question, choixQ, tabMel[1]) );
-            println("           " + 3 +" - " + getCell(question, choixQ, tabMel[2]) );
+            for(int i=0; i<3; i++){ // Affiche les différentes réponses possible
+                println("           " + (i+1) + " - " + getCell(question, choixQ, tabMel[i]) );
+            }
             text(couleur_base);
 
             res = idx+1;
