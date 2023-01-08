@@ -7,12 +7,33 @@ class LesDesDuSavoir extends Program{
     char epreuve = '?';
     // LANG langue = LANG.FR;
 
-
     String couleur_epreuve = "red";
     String couleur_base = "white";
 
     final int TAILLE_TABLEAU = 152;
+    final int LARGEUR_CLASSEMENT = 7; // Affichage du TOP 7
+
     final double PROBA_EPREUVE = 0.33; double PROBA_BONUS = 0.0;
+
+    final String FIXAGE = "fixage.txt";
+    final String TITLE = "savoir.txt";
+    final String MAIN_MENU = "menu.txt";
+    final String MENU_DIFFICULTE = "difficulte.txt";
+    final String MENU_JOUEUR = "creerjoueurmenu.txt";
+    final String MENU_INVENTAIRE = "inventaire.txt";
+    final String MENU_QUITTER = "quitter_partie.txt";
+    final String MENU_STATISTIQUES = "statistique.txt";
+    final String MENU_CLASSEMENT = "classement.txt";
+    final String MENU_PARAMETRE = "parametre.txt";
+    final String MENU_COULEUR = "couleurs.txt";
+    final String MENU_REGLE_1 = "regle.txt";
+    final String MENU_REGLE_2 = "regle2.txt";
+    final String DEFAITE = "defaite.txt";
+
+    final String SAVE_PROFIL = "save_profil.csv";
+    final String QUESTION_EPREUVE = "list_question.csv";
+
+
     final String[] NOM_DIFFICULTE = new String[]{"FACILE", "MOYEN", "DIFFICLE"};
 
     int movement(){
@@ -84,18 +105,34 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    int epreuveMath(int difficulte){
-        int nb1 = 0;
-        int nb2 = 0;
-        double res = 0.0;
+boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         double proba = random();
+
+        if(proba < 0.4){
+            return epreuveMath(difficulte);
+        }
+        else{
+            return epreuveQuestion(difficulte);
+        }
+    }
+
+    boolean epreuveMath(int difficulte){
+        int nb1 = 0,
+            nb2 = 0,
+            res = 0, // Résultat de la question
+            reponse = 0; // Réponse du joueur
+
+        double proba = random();
+
         if (difficulte == 3){
             nb1 = (int) (random()*1000);
             nb2 = (int) (random()*1000);
-        } else if (difficulte == 2){
+        }
+        else if (difficulte == 2){
             nb1 = (int) (random()*100);
             nb2 = (int) (random()*100);
-        } else {
+        }
+        else {
             nb1 = (int) (random()*10);
             nb2 = (int) (random()*10);     
         }
@@ -104,30 +141,159 @@ class LesDesDuSavoir extends Program{
             text(couleur_epreuve);
             println("           "+nb1+"/"+(nb2 + 1));
             text(couleur_base);
-            return (nb1/(nb2+1));
-        }else if (proba<0.5){
+
+            res = (nb1/(nb2+1));
+        }
+        else if (proba<0.5){
             text(couleur_epreuve);
             println("           "+nb1+"*"+nb2);
             text(couleur_base);
-            return (nb1*nb2);
-        }else if (proba<0.75){
+
+            res = (nb1*nb2);
+        }
+        else if (proba<0.75){
             text(couleur_epreuve);
             println("           "+nb1+"+"+nb2);
             text(couleur_base);
-            return (nb1+nb2);
-        }else{
+
+            res = (nb1+nb2);
+        }
+        else{
             text(couleur_epreuve);
             println("           "+nb1+"-"+nb2);
             text(couleur_base);
-            return (nb1-nb2);
+
+            res = (nb1-nb2);
+        }
+
+        println();
+        print("Entrez une réponse : ");
+        reponse = readInt();
+        println();
+
+        if (!testerResultat(res , reponse)){
+            println("Mauvaise réponse, c'était " + res);
+
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    boolean epreuveQuestion(int difficulte){
+        CSVFile question = loadCSV(QUESTION_EPREUVE);
+
+        int nbL = rowCount(question),
+            nbCol = columnCount(question),
+            choixQ = (int)(random() * nbL),
+            choixR = 0,
+            idx = 0,
+            res = 0,
+            reponse = 0;
+
+        if(difficulte == 3){
+            int[] tabInit = new int[]{1,2,3,4,5},
+                tabMel = new int[]{-1,-1,-1,-1,-1};
+
+            for(int i=0; i<length(tabMel); i++){
+                choixR = (int) (random() * length(tabMel));
+
+                while(tabMel[choixR] != -1){
+                    choixR = (int) (random() * length(tabMel));
+                }
+                
+                if(i == 0){
+                    idx = choixR;
+                }
+                tabMel[choixR] = tabInit[i];
+            }
+
+            text(couleur_epreuve);
+            println("           " + getCell(question, choixQ, 0) );
+            println("           " + 1 +" - " + getCell(question, choixQ, tabMel[0]) );
+            println("           " + 2 +" - " + getCell(question, choixQ, tabMel[1]) );
+            println("           " + 3 +" - " + getCell(question, choixQ, tabMel[2]) );
+            println("           " + 4 +" - " + getCell(question, choixQ, tabMel[3]) );
+            println("           " + 5 +" - " + getCell(question, choixQ, tabMel[4]) );
+            text(couleur_base);
+
+            res = idx+1;
+        }
+        else if(difficulte == 2){
+            int[] tabInit = new int[]{1,2,3,4,5},
+                tabMel = new int[]{-1,-1,-1,-1};
+
+            for(int i=0; i<length(tabMel); i++){
+                choixR = (int) (random() * length(tabMel));
+
+                while(tabMel[choixR] != -1){
+                    choixR = (int) (random() * length(tabMel));
+                }
+
+                if(i == 0){
+                    idx = choixR;
+                }
+                tabMel[choixR] = tabInit[i];
+            }
+
+            text(couleur_epreuve);
+            println("           " + getCell(question, choixQ, 0) );
+            println("           " + 1 +" - " + getCell(question, choixQ, tabMel[0]) );
+            println("           " + 2 +" - " + getCell(question, choixQ, tabMel[1]) );
+            println("           " + 3 +" - " + getCell(question, choixQ, tabMel[2]) );
+            println("           " + 4 +" - " + getCell(question, choixQ, tabMel[3]) );
+            text(couleur_base);
+
+            res = idx+1;
+        }
+        else{
+            int[] tabInit = new int[]{1,2,3,4,5},
+                tabMel = new int[]{-1,-1,-1};
+
+            for(int i=0; i<length(tabMel); i++){
+                choixR = (int) (random() * length(tabMel));
+
+                while(tabMel[choixR] != -1){
+                    choixR = (int) (random() * length(tabMel));
+                }
+
+                if(i == 0){
+                    idx = choixR;
+                }
+                tabMel[choixR] = tabInit[i];
+            }
+
+            text(couleur_epreuve);
+            println("           " + getCell(question, choixQ, 0) );
+            println("           " + 1 +" - " + getCell(question, choixQ, tabMel[0]) );
+            println("           " + 2 +" - " + getCell(question, choixQ, tabMel[1]) );
+            println("           " + 3 +" - " + getCell(question, choixQ, tabMel[2]) );
+            text(couleur_base);
+
+            res = idx+1;
+        }
+
+        println();
+        print("Entrez une réponse : ");
+        reponse = readInt();
+        println();
+
+        if (!testerResultat(res , reponse)){
+            println("Mauvaise réponse, c'était " + getCell(question, choixQ, 1));
+
+            return false;
+        }
+        else{
+            return true;
         }
     }
 
     int scoreMultiplieur(int difficulte){
-        if(difficulte == 2){
+        if(difficulte == 3){
             return 9;
         }
-        else if(difficulte == 1){
+        else if(difficulte == 2){
             return 3;
         }
         else{
@@ -135,7 +301,7 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    boolean testerResultatMath(int res, int reponse){
+    boolean testerResultat(int res, int reponse){
         return (res==reponse);
     }
 
@@ -228,13 +394,14 @@ class LesDesDuSavoir extends Program{
     */
     void afficherText(String fichier){
         File f = newFile(fichier);
+
         while(ready(f)){
             println(readLine(f));
         }
     }
 
     void afficherListeJoueur(){
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
         int nbL = rowCount(profilJoueur);
 
         for(int l=0; l<nbL; l++){
@@ -246,15 +413,16 @@ class LesDesDuSavoir extends Program{
     }
 
     String getJoueur(int choixJoueur){
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
         return getCell(profilJoueur, choixJoueur-1, 0);
     }
 
     void saveProfil(int choixProfil, String pseudo, int difficulte, int score, int nb_tours){
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
-        int nbL = rowCount(profilJoueur);
-        int nbCol = columnCount(profilJoueur);
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
+
+        int nbL = rowCount(profilJoueur),
+            nbCol = columnCount(profilJoueur);
 
         Profil p = creerProfil(pseudo, score, nb_tours);
 
@@ -290,7 +458,7 @@ class LesDesDuSavoir extends Program{
             chaines[nbL][7] = p.total_tour_joues + "";
             chaines[nbL][8] = p.best_tour_joues + "";
 
-            saveCSV(chaines, "save_profil.csv");
+            saveCSV(chaines, SAVE_PROFIL);
         }
         else if(choixProfil == 2){ // Sauvegarde sur un profil existant
             String[][] chaines = new String[nbL][nbCol];
@@ -347,12 +515,13 @@ class LesDesDuSavoir extends Program{
                 }
             }
 
-            saveCSV(chaines, "save_profil.csv");
+            saveCSV(chaines, SAVE_PROFIL);
         }
     }
 
     String[] getPlayerStat(int choixStat){
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
+
         int col = columnCount(profilJoueur);
 
         String[] stat = new String[col];
@@ -365,7 +534,8 @@ class LesDesDuSavoir extends Program{
     }
 
     void afficherPlayerStat(String[] playerStat){
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
+
         int nbCol = columnCount(profilJoueur);
 
         println("            Joueur : " + playerStat[0] + "\n");
@@ -394,6 +564,7 @@ class LesDesDuSavoir extends Program{
 
     String centrerText(int longLine, int longMot, String mot){
         String marge = "";
+
         int mid = (longLine - longMot) / 2;
 
         for(int i=0; i<mid; i++){
@@ -404,9 +575,8 @@ class LesDesDuSavoir extends Program{
     }
 
     void afficherClassement(){ // 3 colonnes: "PSEUDO" "BEST_SCORE" "BEST_TOURS_JOUES"
-        final int LARG = 7; // Affichage du TOP 7
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
         int nbL = rowCount(profilJoueur),
             nbCol = columnCount(profilJoueur),
 
@@ -415,8 +585,8 @@ class LesDesDuSavoir extends Program{
 
             idx = 0;
 
-        String[][] stats = new String[nbL][3];
-        String[][] triStats = new String[nbL][3];
+        String[][] stats = new String[nbL][3],
+            triStats = new String[nbL][3];
 
         for(int i=0; i<nbL; i++){ // Calcul longueur
 
@@ -491,7 +661,7 @@ class LesDesDuSavoir extends Program{
 
         println();
 
-        for(int l=0; l<LARG; l++){
+        for(int l=0; l<LARGEUR_CLASSEMENT; l++){
             print("             | " + (l+1) + ". " + triStats[l][0] +  marge(longCol_Pseudo, length(triStats[l][0]) ) + " | "
                 + triStats[l][1] +  marge(longCol_BestScore, length(triStats[l][1]) ) + " | "
                 + triStats[l][2] +  marge(longCol_BestTourJoues, length(triStats[l][2]) ) + " |");
@@ -520,7 +690,7 @@ class LesDesDuSavoir extends Program{
     }
 
     boolean choixStatValide(int choixStat){
-        CSVFile profilJoueur = loadCSV("save_profil.csv");
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
         int nbL = rowCount(profilJoueur);
 
         return choixStat >= 0 && choixStat <= nbL;
@@ -647,24 +817,37 @@ class LesDesDuSavoir extends Program{
     }
 
     void algorithm(){
-        afficherText("fixage.txt"); couleur_base = "white"; couleur_epreuve = "red";
+        afficherText(FIXAGE);
+
+        couleur_base = "white";
+        couleur_epreuve = "red";
         reset();
-        int difficulte = -1; int parametre = -1; int couleur = -1; int quitter_menu = -1; int inventaire_menu = -1;
-        int choixProfil = -1; String pseudo = ""; int choixStat = -1; int choixRanking = -1;
-        int case_actuelle = 0; String choixTour = "";
-        int mouv = 0, nb_tours = 1; int regle = 1;
-        int res_epreuve_math = 0; int reponse_math = 0;
-        int vies = 5; int menu = -1; int score = 0;
+
+        int difficulte = -1, parametre = -1, couleur = -1,
+            quitter_menu = -1, inventaire_menu = -1,
+            choixProfil = -1, choixStat = -1, choixRanking = -1,
+            regle = 1,
+            
+            case_actuelle = 0, mouv = 0, nb_tours = 1,
+            vies = 5, score = 0,
+            
+            menu = -1;
+
+        String pseudo = "",
+            choixTour = "";
+
         Cases[] plateau = new Cases[TAILLE_TABLEAU]; boolean carreau = false; boolean pic = false; BONUS bonusChoisi=BONUS.Rien; int multicarreau = 1;
         double multitrefle = 1.0; boolean trefle = false; BONUS newBonus = BONUS.Rien; boolean epreuveProchaine = false;
         int tailleInventaire = 5; BONUS[] inventaire = creerInventaireVide(tailleInventaire);
 
         while(true){
-            difficulte = -1; parametre = -1;epreuveProchaine = false; regle = 1;
-            choixProfil = -1; choixStat = -1; choixRanking = -1; pseudo = "";
-            nb_tours = 1; score = 0; vies = 5; multitrefle=1; carreau = false; pic = false; trefle=false;
+            difficulte = -1; parametre = -1; choixProfil = -1; choixStat = -1; choixRanking = -1;
+            pseudo = ""; nb_tours = 1; score = 0; vies = 5;
+            epreuveProchaine = false; regle = 1;
+            multitrefle=1; carreau = false; pic = false; trefle=false;
+
             clearScreen();
-            afficherText("savoir.txt");
+            afficherText(TITLE);
             println();
             /*println("1 : Nouvelle partie");
             println("2 : Reprendre une partie en cours");objet
@@ -672,7 +855,7 @@ class LesDesDuSavoir extends Program{
             println();
             println("0 : Quitter");
             */
-            afficherText("menu.txt");
+            afficherText(MAIN_MENU);
             while (!menuEntree(menu)){
                 println();
                 print("Veuillez entrez un entier valide : ");
@@ -685,7 +868,7 @@ class LesDesDuSavoir extends Program{
                 inventaire = creerInventaireVide(tailleInventaire);
                 while(!choixProfilValide(choixProfil)){
                     clearScreen();
-                    afficherText("creerjoueurmenu.txt");
+                    afficherText(MENU_JOUEUR);
                     /*
                     println("1 : Créer un joueur");
                     println("2 : Jouer avec un joueur existant");
@@ -729,7 +912,7 @@ class LesDesDuSavoir extends Program{
 
                 while(!difficulteValide(difficulte) && choixProfil != 0){
                     clearScreen();
-                    afficherText("difficulte.txt");
+                    afficherText(MENU_DIFFICULTE);
                     /*
                     println("1 : Facile");
                     println("2 : Moyen");
@@ -774,15 +957,8 @@ class LesDesDuSavoir extends Program{
                             multitrefle = multitrefle *1.2;
                             trefle = false;
                         }
-                        res_epreuve_math = epreuveMath(difficulte);
-                        println();
-                        print("Entrez une réponse : ");
-                        reponse_math = readInt();
-                        println();
 
-                        if (!testerResultatMath(res_epreuve_math , reponse_math)){
-                            println("Mauvaise réponse, c'était " +res_epreuve_math);
-
+                        if (!doEpreuve(difficulte)){
                             if(random()<PROBA_BONUS){
                                 vies -= 1;
                                 score -= scoreMultiplieur(difficulte)*multicarreau *multitrefle+ 100;
@@ -809,7 +985,7 @@ class LesDesDuSavoir extends Program{
                                     println();
                                 }else{
                                     clearScreen();
-                                    afficherText("inventaire.txt");
+                                    afficherText(MENU_INVENTAIRE);
 
                                     println("Votre inventaire est plein veuillez utiliser un bonus");
                                     println();
@@ -854,7 +1030,7 @@ class LesDesDuSavoir extends Program{
                     }
                     while ((equals(choixTour, "quitter") )&& !valide_quitter(quitter_menu)){
                         clearScreen();
-                        afficherText("quitter_partie.txt");
+                        afficherText(MENU_QUITTER);
                         /*
                         println("1 : Quitter sans sauvegarder");
                         println("2 : Quitter en sauvegardant");
@@ -881,7 +1057,7 @@ class LesDesDuSavoir extends Program{
                     }
                     while ((equals(choixTour, "inventaire") )&& !inventaireValide(inventaire_menu, inventaire)){
                         clearScreen();
-                        afficherText("inventaire.txt");
+                        afficherText(MENU_INVENTAIRE);
                         println(afficherInventaire(inventaire));
                         println();
                         println("            0 : Retour");
@@ -918,7 +1094,7 @@ class LesDesDuSavoir extends Program{
 
                     if (vies == 0){
                         clearScreen();
-                        afficherText("defaite.txt");
+                        afficherText(DEFAITE);
                         println(toString(plateau));
                         println();
                         println("           Joueur : " + pseudo);
@@ -935,7 +1111,7 @@ class LesDesDuSavoir extends Program{
             else if(menu == 2){ // STATISTIQUES
                 while(!choixStatValide(choixStat)){
                     clearScreen();
-                    afficherText("statistiques.txt");
+                    afficherText(MENU_STATISTIQUES);
                     println();
     
                     afficherListeJoueur();
@@ -950,7 +1126,7 @@ class LesDesDuSavoir extends Program{
                     }
                     else{
                         clearScreen();
-                        afficherText("statistiques.txt");
+                        afficherText(MENU_STATISTIQUES);
                         println();
 
                         afficherPlayerStat(getPlayerStat(choixStat) );
@@ -958,19 +1134,16 @@ class LesDesDuSavoir extends Program{
                         println("            0 : Retour");
                         println("\n\n\n");
 
-                        print("Entrez un entier valide : ");
-                        choixStat = readInt();
-                        if(choixStat == 0){
-                            menu = 2;
+                        print("Mettez \"Entrée\" pour retourner au menu : ");
+                        readString();
+                        menu = 2;   
                         }
                     }
                 }
-
-            }
             else if(menu == 3){ // CLASSEMENT
                 while(choixRanking != 0){
                     clearScreen();
-                    afficherText("classement.txt");
+                    afficherText(MENU_CLASSEMENT);
                     println();
 
                     afficherClassement();
@@ -1023,7 +1196,7 @@ class LesDesDuSavoir extends Program{
                     } else if (parametre == 4){
                         while(!couleurValide(couleur) && parametre == 4){
                             clearScreen();
-                            afficherText("couleurs.txt");
+                            afficherText(MENU_COULEUR);
                             /*
                             println("Couleurs : ");
                             println();
@@ -1080,12 +1253,12 @@ class LesDesDuSavoir extends Program{
                 while(regle!=0){
                     if (regle==1){
                         clearScreen();
-                        afficherText("regle.txt");
+                        afficherText(MENU_REGLE_1);
                         print("Entrez un entier valide : ");
                         regle = readInt();
                     }else if(regle==2){
                         clearScreen();
-                        afficherText("regles2.txt");
+                        afficherText(MENU_REGLE_2);
                         print("Entrez un entier valide : ");
                         regle = readInt();
                     }
