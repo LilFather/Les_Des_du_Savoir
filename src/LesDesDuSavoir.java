@@ -15,7 +15,7 @@ class LesDesDuSavoir extends Program{
 
     final double PROBA_EPREUVE = 0.33; double PROBA_BONUS = 0.0;
 
-    /*
+    
     final String FIXAGE = "../ressources/fixage.txt";
     final String TITLE = "../ressources/savoir.txt";
     final String MAIN_MENU = "../ressources/menu.txt";
@@ -33,7 +33,7 @@ class LesDesDuSavoir extends Program{
 
     final String SAVE_PROFIL = "../ressources/save_profil.csv";
     final String QUESTION_EPREUVE = "../ressources/list_question.csv";
-    */
+    /*
     final String FIXAGE = "fixage.txt";
     final String TITLE = "savoir.txt";
     final String MAIN_MENU = "menu.txt";
@@ -51,6 +51,7 @@ class LesDesDuSavoir extends Program{
 
     final String SAVE_PROFIL = "save_profil.csv";
     final String QUESTION_EPREUVE = "list_question.csv";
+    */
 
     final String[] NOM_DIFFICULTE = new String[]{"FACILE", "MOYEN", "DIFFICLE"};
 
