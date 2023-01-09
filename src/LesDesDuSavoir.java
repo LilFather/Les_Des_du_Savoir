@@ -353,6 +353,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         return p;
     }
 
+    
 /*
     int resultat(String math){
         int len = length(math);
@@ -776,7 +777,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }else if (bonus==BONUS.ValetDeTrefle){
             return "Valet de Trefle";
         }else{
-            return "#ERR0R(paul corrige ça c'est pas sérieux frérot tkt j'te trust";
+            return "#ERR0R";
         }
     }
     String afficherInventaire(BONUS[] inventaire){
@@ -805,7 +806,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         int len = length(inventaire);int cpt=0;
         BONUS [] res = new BONUS[len];
         for (int i=0;i<len;i++){
-            if (inventaire[i]!=null){
+            if (inventaire[i]!=null && inventaire[i]!=BONUS.Rien){
                 res[cpt] = inventaire[i];
                 cpt+= 1;
             }
@@ -824,9 +825,9 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
         inventaire[i]=bonus;
     }
-    void enleverBonus(BONUS[] inventaire, int choix){
+    BONUS [] enleverBonus(BONUS[] inventaire, int choix){
         inventaire[choix]=null;
-        inventaireDecalage(inventaire);
+        return inventaireDecalage(inventaire);
     }
 
     void algorithm(){
@@ -1011,7 +1012,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                                         inventaire_menu = readInt();
                                     }
                                     bonusChoisi = inventaire[inventaire_menu-1];
-                                    enleverBonus(inventaire , inventaire_menu-1);
+                                    inventaire = enleverBonus(inventaire , inventaire_menu-1);
+                                    ajouterBonus(inventaire, newBonus);
                                     if(bonusChoisi!=BONUS.Rien){
                                         if (bonusChoisi==BONUS.AsDeCoeur){
                                             vies += 1;
@@ -1037,7 +1039,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                     }
                     epreuveProchaine = (plateau[prochaineCase(case_actuelle,mouv)] == Cases.EPREUVE);
                     choixTour = jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
-                    println(case_actuelle);
+                    
                     if(!equals(choixTour,"quitter") && !equals(choixTour, "inventaire")){
                         case_actuelle=prochaineCase(case_actuelle,mouv);
                     }
@@ -1083,7 +1085,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                             choixTour = "";
                         }else if (inventaireValide(inventaire_menu, inventaire)){
                             bonusChoisi = inventaire[inventaire_menu-1];
-                            enleverBonus(inventaire , inventaire_menu-1);
+                            inventaire = enleverBonus(inventaire , inventaire_menu-1);
                             choixTour ="";
                         }
                     }
