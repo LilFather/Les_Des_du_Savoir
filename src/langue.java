@@ -1,1 +1,0 @@
-enum LANG {FR, EN, ES}

@@ -1,4 +1,4 @@
-//On importe les extensions qui serviront pour les sauvegardes et les affichages fixes
+// On importe les extensions qui serviront pour les sauvegardes et les affichages fixes
 import extensions.File;
 import extensions.CSVFile;
 
@@ -6,7 +6,6 @@ class LesDesDuSavoir extends Program{
     char joueur = 'J';
     char chemin = '_';
     char epreuve = '?';
-    // LANG langue = LANG.FR;
 
     String couleur_epreuve = "red";
     String couleur_base = "white";
@@ -14,10 +13,9 @@ class LesDesDuSavoir extends Program{
     final int TAILLE_TABLEAU = 152;
     final int LARGEUR_CLASSEMENT = 7; // Affichage du TOP 7
 
-    final double PROBA_EPREUVE = 0.33; //Chance qu'une épreuve soit générée
+    final double PROBA_EPREUVE = 0.33; // Chance qu'une épreuve soit générée
     double PROBA_BONUS = 0.0;
 
-    
     final String FIXAGE = "../ressources/fixage.txt";
     final String TITLE = "../ressources/savoir.txt";
     final String MAIN_MENU = "../ressources/menu.txt";
@@ -35,25 +33,6 @@ class LesDesDuSavoir extends Program{
 
     final String SAVE_PROFIL = "../ressources/save_profil.csv";
     final String QUESTION_EPREUVE = "../ressources/list_question.csv";
-    /*
-    final String FIXAGE = "fixage.txt";
-    final String TITLE = "savoir.txt";
-    final String MAIN_MENU = "menu.txt";
-    final String MENU_DIFFICULTE = "difficulte.txt";
-    final String MENU_JOUEUR = "creerjoueurmenu.txt";
-    final String MENU_INVENTAIRE = "inventaire.txt";
-    final String MENU_QUITTER = "quitter_partie.txt";
-    final String MENU_STATISTIQUES = "statistique.txt";
-    final String MENU_CLASSEMENT = "classement.txt";
-    final String MENU_PARAMETRE = "parametre.txt";
-    final String MENU_COULEUR = "couleurs.txt";
-    final String MENU_REGLE_1 = "regle.txt";
-    final String MENU_REGLE_2 = "regle2.txt";
-    final String DEFAITE = "defaite.txt";
-
-    final String SAVE_PROFIL = "save_profil.csv";
-    final String QUESTION_EPREUVE = "list_question.csv";
-    */
 
     final String[] NOM_DIFFICULTE = new String[]{"FACILE", "MOYEN", "DIFFICLE"};
 
@@ -61,9 +40,11 @@ class LesDesDuSavoir extends Program{
     int movement(){
         return (int) ((random()*6) +1);
     }
-    //Crée un plateau de cases pouvant être une épreuve, un chemin où le joueur
+
+    // Crée un plateau de cases pouvant être une épreuve, un chemin où le joueur
     Cases[]creerPlateau(int taille , int case_actuelle){
         Cases [] plateau = new Cases[taille];
+
         for (int i = 0 ; i<taille; i++){
             if (random()<PROBA_EPREUVE && i>6){
                 plateau[i]=Cases.EPREUVE;
@@ -71,61 +52,69 @@ class LesDesDuSavoir extends Program{
                 plateau[i]=Cases.CHEMIN;
             }
         }
+
         plateau[case_actuelle] = Cases.JOUEUR;
+
         return plateau;
     }
     
-    //Renvoie l'affichage en caractère de la case choisie
+    // Renvoie l'affichage en caractère de la case choisie
     char casesToChar(Cases cases){
             if(cases==Cases.JOUEUR){
                 return joueur;
-            }else if(cases==Cases.EPREUVE){
+            }
+            else if(cases==Cases.EPREUVE){
                 return epreuve;
-            }else{
+            }
+            else{
                 return chemin;
             }
     }
-    //Transforme un plateau de cases en chaîne de caractère à afficher
+    
+    // Transforme un plateau de cases en chaîne de caractère à afficher
     String toString(Cases[] plateau){
         String res = "";
         int len = length(plateau);
+
         for(int i = 0;i<len ;i++){
             res += casesToChar(plateau[i]);
         }
+
         return res;
     }
     
-    //Déplace le joueur sur la case suivante
+    // Déplace le joueur sur la case suivante
     void deplacerJoueur(Cases[] plateau , int case_actuelle, int prochaine){
         Cases tmp = plateau[prochaine];
+
         println(plateau[case_actuelle]);
         println(tmp);
         plateau[prochaine] = Cases.JOUEUR;
         plateau[case_actuelle] = tmp;
     }
-    //Génère la case suivante a partir du lancer de dé et de la position du joueur, si il arrive au bout du plateau le replace au début
+    
+    // Génère la case suivante a partir du lancer de dé et de la position du joueur, si il arrive au bout du plateau le replace au début
     int prochaineCase(int case_actuelle , int mouv){
         if (case_actuelle+mouv>=TAILLE_TABLEAU){
             return case_actuelle+mouv-TAILLE_TABLEAU;
-        }else{
+        }
+        else{
             return case_actuelle+mouv;
         }
     }
-/*
-    void deplacerJoueur(char[] plateau , int case_actuelle, int mouv){
-        plateau[prochaineCase(case_actuelle,mouv)] = joueur;
-        plateau[case_actuelle]=chemin;
-    }
-*/
-    //Joue le tour en forçant le joueur à appuyer sur entrée pour continuer, il peut également entrer "inventaire" ou "quitter"
+
+    // Joue le tour en forçant le joueur à appuyer sur entrée pour continuer, il peut également entrer "inventaire" ou "quitter"
     String jouerTour(Cases[] plateau, int case_actuelle, int prochaine){
         println("Veuillez lancer le dé en appuyant sur \"Entrée\", entrer \"quitter\" pour quitter et \"inventaire\" pour accéder à votre inventaire ");
+
         String res = readString();
         int resultat = 0;
-        if (equals(res ,"quitter") || equals(res,"inventaire")){
+
+        if(equals(res ,"quitter") || equals(res,"inventaire")){
             deplacerJoueur(plateau , case_actuelle , case_actuelle);
             return res;
-        } else {
+        }
+        else{
             deplacerJoueur(plateau , case_actuelle , prochaine);
             return "";
         }
@@ -143,7 +132,7 @@ class LesDesDuSavoir extends Program{
         }
     }
     
-    //Génère une épreuve de mathématique, puis la pose au joueur et renvoie si la réponse est valide
+    // Génère une épreuve de mathématique, puis la pose au joueur et renvoie si la réponse est valide
     boolean epreuveMath(int difficulte){
         int nb1 = 0,
             nb2 = 0,
@@ -199,7 +188,7 @@ class LesDesDuSavoir extends Program{
         reponse = readInt();
         println();
 
-        if (!resultatEstCorrect(res , reponse)){
+        if(!resultatEstCorrect(res , reponse)){
             println("Mauvaise réponse, c'était " + res);
 
             return false;
@@ -209,7 +198,7 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    //Génère une épreuve de type question, la pose puis renvoie le résultat
+    // Génère une épreuve de type question, la pose puis renvoie le résultat
     boolean epreuveQuestion(int difficulte){
         CSVFile question = loadCSV(QUESTION_EPREUVE);
 
@@ -318,7 +307,7 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    //Choisit un multiplieur en fonction de la difficulté
+    // Choisit un multiplieur en fonction de la difficulté
     int scoreMultiplieur(int difficulte){
         if(difficulte == 3){ // DIFFICILE
             return 9;
@@ -331,33 +320,12 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    //Renvoie si la réponse donnée est correcte
+    // Renvoie si la réponse donnée est correcte
     boolean resultatEstCorrect(int res, int reponse){
         return (res==reponse);
     }
     
-    /*
-    boolean estUnEntier(String chaine){
-        boolean oui = false; int cpt = 0;
-        int len = length(chaine);
-        while(cpt<len && !oui){
-            oui = (charAt(chaine, cpt)>'0' && charAt(chaine,cpt)<'9');
-        }
-        return oui;
-    }
-    
-
-    
-    Epreuve creerCategorie(String categorie, String[] questions, String[] reponses, int nb_questions){
-        Epreuve c = new Epreuve();
-        c.categorie = categorie;
-        c.questions = questions;
-        c.reponses = reponses;
-        return c;
-    }
-    */
-    
-    //Sert à creer un nouveau profil pour agrémenter la base de données
+    // Sert à creer un nouveau profil pour agrémenter la base de données
     Profil creerProfil(String pseudo, int score, int nb_tours){
         Profil p = new Profil();
         p.pseudo = pseudo;
@@ -376,32 +344,7 @@ class LesDesDuSavoir extends Program{
         return p;
     }
 
-/*
-    int resultat(String math){
-        int len = length(math);
-        int i = 2;
-        char car = charAt(math , i);
-        String nb1 = 0; String nb2 = 0;
-        while (!(car != '/') || !(car != '*') || !(car != '+') || !(car != '-')){
-            car = charAt(math , i);
-            i++;
-        }
-        nb1 = (substring(math,0,i-1));
-        nb2 = (substring(math,i+1,len-1));
-        println(nb1 + " " + nb2);
-        if (car == '/'){
-            return (nb1 / nb2);
-        } else if (car == '*'){
-            return (nb1 * nb2);
-        } else if(car == '+'){
-            return (nb1 + nb2);
-        }else {
-            return (nb1 - nb2);
-        }
-    }
-*/  
-
-    //Affiche un fichier texte à partir du chemin mis en paramètre
+    // Affiche un fichier texte à partir du chemin mis en paramètre
     void afficherText(String fichier){
         File f = newFile(fichier);
 
@@ -410,27 +353,27 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    //Affiche la liste des joueur à partir du fichier csv "save_profil.csv"
+    // Affiche la liste des joueur à partir du fichier csv "save_profil.csv"
     void afficherListeJoueur(){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
         int nbL = rowCount(profilJoueur);
 
-        for(int l=0; l<nbL; l++){
+        for(int l=1; l<nbL; l++){
             String cell = getCell(profilJoueur, l, 0);
-            print("            " + (l+1) + " : " + cell);
+            print("            " + (l) + " : " + cell);
 
             println();
         }
     }
 
-    //Sert à afficher un joueur à partir d'un choix rentré dans un menu
+    // Sert à afficher un joueur à partir d'un choix rentré dans un menu
     String getJoueur(int choixJoueur){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
         return getCell(profilJoueur, choixJoueur-1, 0);
     }
 
-    //Sauvegarde un profil sur le fichier csv "save_profil.csv"
+    // Sauvegarde un profil sur le fichier csv "save_profil.csv"
     void saveProfil(int choixProfil, String pseudo, int difficulte, int score, int nb_tours){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
@@ -439,7 +382,8 @@ class LesDesDuSavoir extends Program{
 
         Profil p = creerProfil(pseudo, score, nb_tours);
 
-        if(choixProfil == 1){ // Créer un profil
+        // Créer un profil
+        if(choixProfil == 1){
             String[][] chaines = new String[nbL+1][nbCol];
 
             for(int l=0; l<nbL; l++){
@@ -473,7 +417,8 @@ class LesDesDuSavoir extends Program{
 
             saveCSV(chaines, SAVE_PROFIL);
         }
-        else if(choixProfil == 2){ // Sauvegarde sur un profil existant
+        // Sauvegarde sur un profil existant
+        else if(choixProfil == 2){
             String[][] chaines = new String[nbL][nbCol];
 
             for(int l=0; l<nbL; l++){
@@ -532,7 +477,7 @@ class LesDesDuSavoir extends Program{
         }
     }
   
-    //Renvoie un tableau composé des statistiques enregistrées d'un joueur dans le fichier "save_profil.csv"
+    // Renvoie un tableau composé des statistiques enregistrées d'un joueur dans le fichier "save_profil.csv"
     String[] getPlayerStat(int choixStat){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
@@ -541,13 +486,13 @@ class LesDesDuSavoir extends Program{
         String[] stat = new String[col];
         
         for(int i=0; i<col; i++){
-            stat[i] = getCell(profilJoueur, choixStat-1, i);
+            stat[i] = getCell(profilJoueur, choixStat, i);
         }
 
         return stat;
     }
 
-    //Affiche les statistiques d'un joueur en utilisant le tableau définit précédemment
+    // Affiche les statistiques d'un joueur en utilisant le tableau définit précédemment
     void afficherPlayerStat(String[] playerStat){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
@@ -567,7 +512,7 @@ class LesDesDuSavoir extends Program{
         println("            Tour joués en une partie : " + playerStat[8]);
     }
 
-    //Insère une marge permettant d'aligner correctement le classement dans la fonction centrerText
+    // Insère une marge permettant d'aligner correctement le classement dans la fonction centrerText
     String marge(int longColX, int longChaine){
         String m = "";
 
@@ -578,7 +523,7 @@ class LesDesDuSavoir extends Program{
         return m;
     }
 
-    //Sert à centrer le texte pour l'affichage du classement
+    // Sert à centrer le texte pour l'affichage du classement
     String centrerText(int longLine, int longMot, String mot){
         String marge = "";
 
@@ -594,6 +539,7 @@ class LesDesDuSavoir extends Program{
     // 3 colonnes: "PSEUDO" "BEST_SCORE" "BEST_TOURS_JOUES"
     
     //Affiche le classement 
+    // !!! ATTENTION la première ligne du fichier save_profil est désignée au nom des colonnes !!!
     void afficherClassement(){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
@@ -605,51 +551,43 @@ class LesDesDuSavoir extends Program{
 
             idx = 0;
 
-        String[][] stats = new String[nbL][3],
-            triStats = new String[nbL][3];
+        String[][] stats = new String[nbL-1][3],
+            triStats = new String[nbL-1][3];
 
-        for(int i=0; i<nbL; i++){ // Calcul longueur
+        for(int i=1; i<nbL; i++){ // Calcul longueur
 
             // pour colonne "PSEUDO"
             if(length(getCell(profilJoueur, i, 0) ) > longColPseudo){
                 longColPseudo = length(getCell(profilJoueur, i, 0) );
-
-                //println(longColPseudo);
             }
 
             // pour colonne "BEST_SCORE"
             if(length(getCell(profilJoueur, i, 6) ) > longlongColBestScore){
                 longlongColBestScore = length(getCell(profilJoueur, i, 6) );
-
-                //println(longlongColBestScore);
             }
 
             // pour colonne "BEST_TOURS_JOUES"
             if(length(getCell(profilJoueur, i, 8) ) > longColBestTourJoues){
                 longColBestTourJoues = length(getCell(profilJoueur, i, 8) );
-
-                //println(longColBestTourJoues);
             }
         }
 
         longCol += longColPseudo + longlongColBestScore + longColBestTourJoues;
 
-        //println(longCol);
-
         // Tri des données
-        for(int i=0; i<nbL; i++){
-            stats[i][0] = getCell(profilJoueur, i, 0);
-            stats[i][1] = getCell(profilJoueur, i, 6);
-            stats[i][2] = getCell(profilJoueur, i, 8);
+        for(int i=1; i<nbL; i++){
+            stats[i-1][0] = getCell(profilJoueur, i, 0);
+            stats[i-1][1] = getCell(profilJoueur, i, 6);
+            stats[i-1][2] = getCell(profilJoueur, i, 8);
         }
 
         String[][] chaine = new String[1][3];
-        for(int i=0; i<nbL; i++){
+        for(int i=0; i<length(stats, 1); i++){
             chaine[0][0] = stats[i][0]; 
-            chaine[0][1] = stats[i][1]; 
+            chaine[0][1] = stats[i][1];
             chaine[0][2] = stats[i][2];
 
-            for(int y=0; y<nbL; y++){
+            for(int y=0; y<length(stats, 1); y++){
                 if(stringToInt(chaine[0][1]) >= stringToInt(stats[y][1]) ){
                     if(stringToInt(chaine[0][1]) == stringToInt(stats[y][1])
                         && stringToInt(chaine[0][2]) >= stringToInt(stats[y][2]) ){
@@ -662,9 +600,9 @@ class LesDesDuSavoir extends Program{
                 }
             }
 
-            triStats[(nbL-idx)][0] = chaine[0][0];
-            triStats[nbL-idx][1] = chaine[0][1];
-            triStats[nbL-idx][2] = chaine[0][2];
+            triStats[nbL-1-idx][0] = chaine[0][0];
+            triStats[nbL-1-idx][1] = chaine[0][1];
+            triStats[nbL-1-idx][2] = chaine[0][2];
 
             idx = 0;
         }
@@ -697,57 +635,64 @@ class LesDesDuSavoir extends Program{
         println();
     }
 
-    //Vérifie que le paramètre entré pour le menu est valide
+    // Vérifie que le paramètre entré pour le menu est valide
     boolean menuEntree(int menu){
         return (menu >= 0 && menu <=5);
     }
 
     
-    //Vérifie que le paramètre entré pour le profil est valide
+    // Vérifie que le paramètre entré pour le profil est valide
     boolean choixProfilValide(int choixProfil){
         return choixProfil >= 0 && choixProfil <= 2;
     }
 
+    // Vérifie que le paramètre entré pour le joueur est valide
+    boolean choixJoueurValide(int choixJoueur){
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
+        int nbL = rowCount(profilJoueur);
+
+        return choixJoueur >= 0 && choixJoueur < nbL;
+    }
     
-    //Vérifie que le paramètre entré pour la difficulté est valide
+    // Vérifie que le paramètre entré pour la difficulté est valide
     boolean difficulteValide(int difficulte){
         return (difficulte>=0 && difficulte <=3);
     }
 
     
-    //Vérifie que le paramètre entré pour les statistiques est valide
+    // Vérifie que le paramètre entré pour les statistiques est valide
     boolean choixStatValide(int choixStat){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
         int nbL = rowCount(profilJoueur);
 
-        return choixStat >= 0 && choixStat <= nbL;
+        return choixStat >= 1 && choixStat < nbL;
     }
 
     
-    //Vérifie que le paramètre entré pour les paramètres est valide
+    // Vérifie que le paramètre entré pour les paramètres est valide
     boolean paramValide(int param){
         return (param>=0 && param <=4);
     }
 
     
-    //Vérifie que le paramètre entré pour la couleur est valide
+    // Vérifie que le paramètre entré pour la couleur est valide
     boolean couleurValide(int couleur){
         return (couleur>=0 && couleur <= 6);
     }
 
     
-    //Vérifie que le paramètre entré pour quitter est valide
+    // Vérifie que le paramètre entré pour quitter est valide
     boolean valide_quitter(int quitter){
         return (quitter>=0 && quitter <= 2);
     }
 
     
-    //Vérifie que le paramètre entré pour l'inventaire est valide
+    // Vérifie que le paramètre entré pour l'inventaire est valide
     boolean inventaireValide(int inv , BONUS []inventaire){
         return (inv>= 0 && inv <= nbBonusInventaire(inventaire));
     }
 
-    //Sélectionne la chance qu'une épreuve soit contienne un bonus en fonction de la difficulté
+    // Sélectionne la chance qu'une épreuve soit contienne un bonus en fonction de la difficulté
     double bonus_difficulte(int difficulte){
         if(difficulte==1){
             return 0.4;
@@ -758,7 +703,7 @@ class LesDesDuSavoir extends Program{
         }
     }
     
-    //Renvoie le nombre de bonus présent dans l'inventaire
+    // Renvoie le nombre de bonus présent dans l'inventaire
     int nbBonusInventaire(BONUS[] inventaire){
         int res = 0;
         int len = length(inventaire);
@@ -770,7 +715,7 @@ class LesDesDuSavoir extends Program{
         return res;
     }
     
-    //Choisit et renvoie un bonus de manière aléatoire
+    // Choisit et renvoie un bonus de manière aléatoire
     BONUS selectionBonus(){
         double tmp = random();
         if (tmp<0.2){
@@ -786,66 +731,81 @@ class LesDesDuSavoir extends Program{
         }
     }
 
-    //Génère et renvoie un inventaire de bonus vide sous la forme d'un tableau
+    // Génère et renvoie un inventaire de bonus vide sous la forme d'un tableau
     BONUS[] creerInventaireVide(int taille){
         BONUS[] inventaire = new BONUS[taille];
         return inventaire;
     }
 
-    //Transforme un bonus en son affichage
+    // Transforme un bonus en son affichage
     String toStringBonus(BONUS bonus){
         if (bonus==BONUS.AsDeCoeur){
             return "As de Coeur";
-        } else if (bonus==BONUS.AsDeCarreau){
+        }
+        else if (bonus==BONUS.AsDeCarreau){
             return "As de Carreau";
-        }else if (bonus==BONUS.AsDePic){
+        }
+        else if (bonus==BONUS.AsDePic){
             return "As de Pic";
-        }else if (bonus==BONUS.AsDeTrefle){
+        }
+        else if (bonus==BONUS.AsDeTrefle){
             return "As de Trefle";
-        }else if (bonus==BONUS.ValetDeTrefle){
+        }
+        else if (bonus==BONUS.ValetDeTrefle){
             return "Valet de Trefle";
-        }else{
+        }
+        else{
             return "#ERR0R";
         }
     }
 
-    //Affiche l'inventaire avec les options de choix avant chaque bonus
+    // Affiche l'inventaire avec les options de choix avant chaque bonus
     String afficherInventaire(BONUS[] inventaire){
         String res = "";
         int len = length(inventaire);
+
         for(int i=0;i<len;i++){
             if (inventaire[i]==BONUS.AsDeCoeur){
                 res += "             "+(i+1) + " : As de Coeur \n";
-            } else if (inventaire[i]==BONUS.AsDeCarreau){
+            }
+            else if (inventaire[i]==BONUS.AsDeCarreau){
                 res += "             "+(i+1) + " : As de Carreau \n";
-            }else if (inventaire[i]==BONUS.AsDePic){
+            }
+            else if (inventaire[i]==BONUS.AsDePic){
                 res += "             "+(i+1) + " : As de Pic \n";
-            }else if (inventaire[i]==BONUS.AsDeTrefle){
+            }
+            else if (inventaire[i]==BONUS.AsDeTrefle){
                 res += "             "+(i+1) + " : As de Trefle \n";
-            }else if (inventaire[i]==BONUS.ValetDeTrefle){
+            }
+            else if (inventaire[i]==BONUS.ValetDeTrefle){
                 res += "             "+(i+1) + " : Valet de Trefle \n";
             }
         }
-        if (inventaire[0]==null){ //si l'inventaire est vide, affiche qu'il est vide
+
+        // Si l'inventaire est vide, affiche qu'il est vide
+        if (inventaire[0]==null){
             println("            Votre inventaire est vide, quel dommage (sarcasme)...");
         }
+
         return res;
     }
 
-    //Décale l'inventaire vert la gauche pour éviter d'avoir des trous dans le tableau
+    // Décale l'inventaire vert la gauche pour éviter d'avoir des trous dans le tableau
     BONUS [] inventaireDecalage(BONUS [] inventaire){
         int len = length(inventaire);int cpt=0;
         BONUS [] res = new BONUS[len];
+
         for (int i=0;i<len;i++){
             if (inventaire[i]!=null && inventaire[i]!=BONUS.Rien){
                 res[cpt] = inventaire[i];
                 cpt+= 1;
             }
         }
+
         return res;
     }
 
-    //Renvoie si l'inventaire est plein ou non
+    // Renvoie si l'inventaire est plein ou non
     boolean inventairePlein(BONUS[] inventaire){
         return (inventaire[length(inventaire)-1] != null);
     }
@@ -853,15 +813,18 @@ class LesDesDuSavoir extends Program{
     //Ajoute un bonus à l'inventaire à la première case vide
     void ajouterBonus(BONUS [] inventaire, BONUS bonus){
         int i = 0; int len = length(inventaire);
+
         while(inventaire[i]!=null){
             i+=1;
         }
+
         inventaire[i]=bonus;
     }
     
-    //Enlève un bonus de l'inventaire à partir de sa position et renvoie l'inventaire une fois décalé
+    // Enlève un bonus de l'inventaire à partir de sa position et renvoie l'inventaire une fois décalé
     BONUS [] enleverBonus(BONUS[] inventaire, int choix){
         inventaire[choix]=null;
+
         return inventaireDecalage(inventaire);
     }
 
@@ -875,10 +838,10 @@ class LesDesDuSavoir extends Program{
         // Initialise tout les paramètres de menu à des valeurs impossibles
         int difficulte = -1, parametre = -1, couleur = -1,
             quitter_menu = -1, inventaire_menu = -1,
-            choixProfil = -1, choixStat = -1, choixRanking = -1,
+            choixProfil = -1, choixJoueur = -1, choixStat = -1, choixRanking = -1,
             regle = 1,
             
-        //Initialise les variables principales qui seront utilisée dans le jeu
+        // Initialise les variables principales qui seront utilisée dans le jeu
             case_actuelle = 0, mouv = 0, nb_tours = 1,
             vies = 5, score = 0,
             
@@ -892,10 +855,11 @@ class LesDesDuSavoir extends Program{
         double multitrefle = 1.0; boolean trefle = false; BONUS newBonus = BONUS.Rien; boolean epreuveProchaine = false;
         int tailleInventaire = 5; BONUS[] inventaire = creerInventaireVide(tailleInventaire);
 
-        while(true){ // Boucle infinie pour que le jeu se joue en boucle
+        // Boucle infinie pour que le jeu se joue en boucle
+        while(true){
             
             // Réinitialisation de toutes les valeurs après le retour au menu
-            difficulte = -1; parametre = -1; choixProfil = -1; choixStat = -1; choixRanking = -1;
+            difficulte = -1; parametre = -1; choixProfil = -1; choixJoueur = -1; choixStat = -1; choixRanking = -1;
             pseudo = ""; nb_tours = 1; score = 0; vies = 5;
             epreuveProchaine = false; regle = 1;
             multitrefle=1; carreau = false; pic = false; trefle=false;
@@ -925,42 +889,49 @@ class LesDesDuSavoir extends Program{
                     choixProfil = readInt();
                     println();
 
-                    if(choixProfil == 0){
+                    if(choixProfil == 0){ // RETOUR
                         menu = -1;
                     }
-                    else if(choixProfil == 1){
+                    else if(choixProfil == 1){ // Créer un joueur
                         clearScreen();
 
                         print("Entrez un pseudonyme : ");
                         pseudo = readString();
                     }
-                    else if(choixProfil == 2){
-                        clearScreen();
-                        afficherListeJoueur();
+                    else if(choixProfil == 2){ // Joue sur un profil existant
+                        while(!choixJoueurValide(choixJoueur)){
+                            clearScreen();
+                            afficherListeJoueur();
 
-                        println();
-                        println("            0 : Retour");
-                        println("\n\n\n");
+                            println();
+                            println("            0 : Retour");
+                            println("\n\n\n");
 
-                        print("Choisir le joueur : ");
-                        int choixJoueur = readInt();
+                            print("Choisir le joueur : ");
+                            choixJoueur = readInt();
+                            
+                            if(choixJoueur == 0){
+                                choixProfil = -1;
+                            }
+                            else if(choixJoueurValide(choixJoueur)){
+                                pseudo = getJoueur(choixJoueur); // Initialise qui est le joueur
+                                
+                            }
+                        }
                         
-                        if(choixJoueur == 0){
-                            choixProfil = -1;
-                        }
-                        else{
-                            pseudo = getJoueur(choixJoueur); // Initialise qui est le joueur
-                        }
+                        choixJoueur = -1;
                     }
                 }
 
                 while(!difficulteValide(difficulte) && choixProfil != 0){ // Redemande jusqu'à ce que la difficulté soit valide
                     clearScreen();
                     afficherText(MENU_DIFFICULTE);
+
                     println();
                     print("Entrez une difficulté valide : ");
                     difficulte = readInt();
                     println();
+
                     if (difficulte == 0){ // Retour au menu
                         menu = -1;
                     }
@@ -994,7 +965,7 @@ class LesDesDuSavoir extends Program{
                             multicarreau = nb_tours;
                             carreau = false;
                         }
-                        if (trefle){ //Effet du bonus Trefle actif
+                        if (trefle){ // Effet du bonus Trefle actif
                             multitrefle = multitrefle *1.2;
                             trefle = false;
                         }
@@ -1003,15 +974,19 @@ class LesDesDuSavoir extends Program{
                             if(random()<PROBA_BONUS){
                                 vies -= 1;
                                 score -= scoreMultiplieur(difficulte)*multicarreau *multitrefle+ 100;
+
                                 println("Il s'agissait d'un bonus mais vous ne l'aurez pas...");
 
-                            }else{
+                            }
+                            else{
                                 vies -= 1;
                                 score -= scoreMultiplieur(difficulte)*multicarreau *multitrefle+ 100;
+
                                 println();
                             }
 
-                        }else{
+                        }
+                        else{
                             println("Bonne réponse");
 
                             if(random()<PROBA_BONUS){
@@ -1024,7 +999,8 @@ class LesDesDuSavoir extends Program{
                                     println("Vous ajoutez "+ toStringBonus(newBonus)+" à votre inventaire !");
                                     println();
                                     println();
-                                }else{ // Sinon force le joueur à utiliser un bonus pour le remplacer
+                                }
+                                else{ // Sinon force le joueur à utiliser un bonus pour le remplacer
                                     clearScreen();
                                     afficherText(MENU_INVENTAIRE);
 
@@ -1038,32 +1014,40 @@ class LesDesDuSavoir extends Program{
                                         print("Veuillez choisir un bonus à échanger avec "+toStringBonus(newBonus)+" : ");
                                         inventaire_menu = readInt();
                                     }
+
                                     bonusChoisi = inventaire[inventaire_menu-1];
                                     inventaire = enleverBonus(inventaire , inventaire_menu-1);
                                     ajouterBonus(inventaire, newBonus);
+
                                     if(bonusChoisi!=BONUS.Rien){
                                         if (bonusChoisi==BONUS.AsDeCoeur){
                                             vies += 1;
-                                        } else if(bonusChoisi==BONUS.AsDeCarreau){
+                                        }
+                                        else if(bonusChoisi==BONUS.AsDeCarreau){
                                             carreau = true;
-                                        }else if(bonusChoisi==BONUS.AsDePic){
+                                        }
+                                        else if(bonusChoisi==BONUS.AsDePic){
                                             pic = true;
-                                        }else if(bonusChoisi==BONUS.AsDeTrefle){
+                                        }
+                                        else if(bonusChoisi==BONUS.AsDeTrefle){
                                             trefle = true;
-                                        }else if(bonusChoisi==BONUS.ValetDeTrefle){
+                                        }
+                                        else if(bonusChoisi==BONUS.ValetDeTrefle){
                                             score=score/2;
                                         }
                                         bonusChoisi=BONUS.Rien;
                                     }
                                     inventaire_menu = -1;
                                 }
-                            }else{
+                            }
+                            else{
                                 score += ( mouv + scoreMultiplieur(difficulte)*multicarreau*multitrefle ) + 100; // Augmente le score avec les multiplieurs
                                 println();
                             }
                         }
                         multicarreau = 1;pic = false; // Réinitialise le multiplieurs de trèfle et reinitialise pic
                     }
+                    
                     epreuveProchaine = (plateau[prochaineCase(case_actuelle,mouv)] == Cases.EPREUVE);
                     choixTour = jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
                     
@@ -1141,14 +1125,16 @@ class LesDesDuSavoir extends Program{
                         println();
                         println("Sauvegarde en cours...");
                         delay(2000);
+
                         saveProfil(choixProfil, pseudo, difficulte, score, nb_tours);
                         menu = -1;
                     }
                 }
             }
+
             // STATISTIQUES
             else if(menu == 2){
-                while(!choixStatValide(choixStat)){
+                while(!choixStatValide(choixStat) && choixStat != 0){
                     clearScreen();
                     afficherText(MENU_STATISTIQUES);
                     println();
@@ -1160,25 +1146,25 @@ class LesDesDuSavoir extends Program{
                     print("Choisir le profil à afficher : ");
 
                     choixStat = readInt();
+
                     if(choixStat == 0){
                         menu = -1;
                     }
-                    else{
+                    else if(choixStatValide(choixStat)){
                         clearScreen();
                         afficherText(MENU_STATISTIQUES);
                         println();
 
                         afficherPlayerStat(getPlayerStat(choixStat) );
-                        println("\n\n\n");
-                        println("            0 : Retour");
-                        println("\n\n\n");
+                        println("\n\n\n\n\n\n");
 
                         print("Mettez \"Entrée\" pour retourner au menu : ");
                         readString();
-                        menu = 2;   
+                        menu = 2;
                     }
                 }
             }
+
             // CLASSEMENT
             else if(menu == 3){
                 while(choixRanking != 0){
@@ -1193,15 +1179,18 @@ class LesDesDuSavoir extends Program{
 
                     print("Entrez un entier valide : ");
                     choixRanking = readInt();
+
                     if(choixRanking == 0){
                         menu = -1;
                     }
                 }
             }
+
             // PARAMETRES
             else if (menu == 4){
                 while(!paramValide(parametre)){
                     couleur = -1;
+
                     // Affichage du menu des paramètres
                     clearScreen();
                     afficherText("parametre.txt");
@@ -1218,25 +1207,29 @@ class LesDesDuSavoir extends Program{
                     println();
                     print("Entrez un entier valide : ");
                     parametre = readInt();
+
                     if (parametre == 0){
                         menu = -1;
-                    } else if (parametre == 1){
+                    }
+                    else if (parametre == 1){
                         println();
                         print("Entrez un caractère : ");
                         joueur = readChar();
                         parametre = -1;
-                    } else if (parametre == 2){
+                    }
+                    else if (parametre == 2){
                         println();
                         print("Entrez un caractère : ");
                         chemin = readChar();
                         parametre = -1;
-                    } else if (parametre == 3){
+                    }
+                    else if (parametre == 3){
                         println();
                         print("Entrez un caractère : ");
                         epreuve = readChar();
                         parametre = -1;
-                    } else if (parametre == 4){
-                        
+                    }
+                    else if (parametre == 4){
                         // Sert à modifier les couleurs
                         while(!couleurValide(couleur) && parametre == 4){
                             clearScreen();
@@ -1248,31 +1241,37 @@ class LesDesDuSavoir extends Program{
 
                             if (couleur == 0){
                                 parametre = -1;
-                            } else if(couleur == 6){
+                            }
+                            else if(couleur == 6){
                                 reset(); couleur_base = "white";
                                 couleur = -1;
-                            } else if (couleur == 1){
+                            }
+                            else if (couleur == 1){
                                 couleur_base = "red";
                                 couleur_epreuve = "blue";
                                 text(couleur_base);
                                 background("black");
                                 couleur = -1;
-                            } else if (couleur == 2){
+                            }
+                            else if (couleur == 2){
                                 couleur_base = "blue";
                                 text(couleur_base);
                                 background("white");
                                 couleur = -1;
-                            } else if (couleur == 3){
+                            }
+                            else if (couleur == 3){
                                 couleur_base = "green";
                                 text(couleur_base);
                                 background("black");
                                 couleur = -1;
-                            } else if (couleur == 4){
+                            }
+                            else if (couleur == 4){
                                 couleur_base = "white";
                                 text(couleur_base);
                                 background("black");
                                 couleur = -1;
-                            } else if (couleur == 5){
+                            }
+                            else if (couleur == 5){
                                 couleur_base = "black";
                                 text(couleur_base);
                                 background("white");
@@ -1281,16 +1280,18 @@ class LesDesDuSavoir extends Program{
                         }
                     }
                 }
+            }
+
             // REGLES
-            }else if(menu == 5){
-                
+            else if(menu == 5){
                 while(regle!=0){ // Permet de sélectionner quel page de règle
                     if (regle==1){
                         clearScreen();
                         afficherText(MENU_REGLE_1);
                         print("Entrez un entier valide : ");
                         regle = readInt();
-                    }else if(regle==2){
+                    }
+                    else if(regle==2){
                         clearScreen();
                         afficherText(MENU_REGLE_2);
                         print("Entrez un entier valide : ");
@@ -1299,7 +1300,6 @@ class LesDesDuSavoir extends Program{
                 }
                 menu = -1;
             }
-            
             else if(menu == 0){ // Casse la boucle while(true) pour quitter le jeu après avoir nettoyer l'écran
                 clearScreen();
                 break;
