@@ -1,3 +1,4 @@
+//On importe les extensions qui serviront pour les sauvegardes et les affichages fixes
 import extensions.File;
 import extensions.CSVFile;
 
@@ -13,7 +14,8 @@ class LesDesDuSavoir extends Program{
     final int TAILLE_TABLEAU = 152;
     final int LARGEUR_CLASSEMENT = 7; // Affichage du TOP 7
 
-    final double PROBA_EPREUVE = 0.33; double PROBA_BONUS = 0.0;
+    final double PROBA_EPREUVE = 0.33; //Chance qu'une épreuve soit générée
+    double PROBA_BONUS = 0.0;
 
     
     final String FIXAGE = "../ressources/fixage.txt";
@@ -55,10 +57,11 @@ class LesDesDuSavoir extends Program{
 
     final String[] NOM_DIFFICULTE = new String[]{"FACILE", "MOYEN", "DIFFICLE"};
 
+    // Génère un lancé de dé à 6 faces
     int movement(){
         return (int) ((random()*6) +1);
     }
-
+    //Crée un plateau de cases pouvant être une épreuve, un chemin où le joueur
     Cases[]creerPlateau(int taille , int case_actuelle){
         Cases [] plateau = new Cases[taille];
         for (int i = 0 ; i<taille; i++){
@@ -71,7 +74,8 @@ class LesDesDuSavoir extends Program{
         plateau[case_actuelle] = Cases.JOUEUR;
         return plateau;
     }
-
+    
+    //Renvoie l'affichage en caractère de la case choisie
     char casesToChar(Cases cases){
             if(cases==Cases.JOUEUR){
                 return joueur;
@@ -81,6 +85,7 @@ class LesDesDuSavoir extends Program{
                 return chemin;
             }
     }
+    //Transforme un plateau de cases en chaîne de caractère à afficher
     String toString(Cases[] plateau){
         String res = "";
         int len = length(plateau);
@@ -89,7 +94,8 @@ class LesDesDuSavoir extends Program{
         }
         return res;
     }
-
+    
+    //Déplace le joueur sur la case suivante
     void deplacerJoueur(Cases[] plateau , int case_actuelle, int prochaine){
         Cases tmp = plateau[prochaine];
         println(plateau[case_actuelle]);
@@ -97,7 +103,7 @@ class LesDesDuSavoir extends Program{
         plateau[prochaine] = Cases.JOUEUR;
         plateau[case_actuelle] = tmp;
     }
-
+    //Génère la case suivante a partir du lancer de dé et de la position du joueur, si il arrive au bout du plateau le replace au début
     int prochaineCase(int case_actuelle , int mouv){
         if (case_actuelle+mouv>=TAILLE_TABLEAU){
             return case_actuelle+mouv-TAILLE_TABLEAU;
@@ -111,6 +117,7 @@ class LesDesDuSavoir extends Program{
         plateau[case_actuelle]=chemin;
     }
 */
+    //Joue le tour en forçant le joueur à appuyer sur entrée pour continuer, il peut également entrer "inventaire" ou "quitter"
     String jouerTour(Cases[] plateau, int case_actuelle, int prochaine){
         println("Veuillez lancer le dé en appuyant sur \"Entrée\", entrer \"quitter\" pour quitter et \"inventaire\" pour accéder à votre inventaire ");
         String res = readString();
@@ -123,8 +130,9 @@ class LesDesDuSavoir extends Program{
             return "";
         }
     }
-
-boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
+    
+    // Tire aléatoirement une épreuve, la pose et renvoie si la réponse est valide
+    boolean doEpreuve(int difficulte){
         double proba = random();
 
         if(proba < 0.4){
@@ -134,7 +142,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
             return epreuveQuestion(difficulte);
         }
     }
-
+    
+    //Génère une épreuve de mathématique, puis la pose au joueur et renvoie si la réponse est valide
     boolean epreuveMath(int difficulte){
         int nb1 = 0,
             nb2 = 0,
@@ -200,6 +209,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
 
+    //Génère une épreuve de type question, la pose puis renvoie le résultat
     boolean epreuveQuestion(int difficulte){
         CSVFile question = loadCSV(QUESTION_EPREUVE);
 
@@ -308,6 +318,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
 
+    //Choisit un multiplieur en fonction de la difficulté
     int scoreMultiplieur(int difficulte){
         if(difficulte == 3){ // DIFFICILE
             return 9;
@@ -320,10 +331,12 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
 
+    //Renvoie si la réponse donnée est correcte
     boolean resultatEstCorrect(int res, int reponse){
         return (res==reponse);
     }
-
+    
+    /*
     boolean estUnEntier(String chaine){
         boolean oui = false; int cpt = 0;
         int len = length(chaine);
@@ -332,7 +345,9 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
         return oui;
     }
+    
 
+    
     Epreuve creerCategorie(String categorie, String[] questions, String[] reponses, int nb_questions){
         Epreuve c = new Epreuve();
         c.categorie = categorie;
@@ -340,7 +355,9 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         c.reponses = reponses;
         return c;
     }
-
+    */
+    
+    //Sert à creer un nouveau profil pour agrémenter la base de données
     Profil creerProfil(String pseudo, int score, int nb_tours){
         Profil p = new Profil();
         p.pseudo = pseudo;
@@ -383,34 +400,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
 */  
-/*  
-    void algorithm(){
-        int difficulte = -1;
-        int case_actuelle = 0;
-        int mouv = 0;
-        int res_epreuve = 0; int reponse = 0;
-        char[] plateau = creerPlateau(TAILLE_TABLEAU , case_actuelle);
-        while(true){
-            println(toString(plateau));
-            println();
-            println(vies);
-            mouv = movement();
-            if (plateau[prochaineCase(case_actuelle,mouv)] == epreuve){
-                res_epreuve = epreuveMath(0);
-                print("Entrez une réponse : ");
-                reponse = readInt();
-                if (!resultatEstCorrectMath(res_epreuve , reponse)){
-                    println("Mauvaise réponse");
-                    vies -= 1;
-                }else{
-                    println("Bonne réponse");
-                }
-            }
-            jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
-            case_actuelle=prochaineCase(case_actuelle,mouv);
-        }
-    }
-    */
+
+    //Affiche un fichier texte à partir du chemin mis en paramètre
     void afficherText(String fichier){
         File f = newFile(fichier);
 
@@ -419,6 +410,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
 
+    //Affiche la liste des joueur à partir du fichier csv "save_profil.csv"
     void afficherListeJoueur(){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
         int nbL = rowCount(profilJoueur);
@@ -431,12 +423,14 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
 
+    //Sert à afficher un joueur à partir d'un choix rentré dans un menu
     String getJoueur(int choixJoueur){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
         return getCell(profilJoueur, choixJoueur-1, 0);
     }
 
+    //Sauvegarde un profil sur le fichier csv "save_profil.csv"
     void saveProfil(int choixProfil, String pseudo, int difficulte, int score, int nb_tours){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
@@ -537,7 +531,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
             saveCSV(chaines, SAVE_PROFIL);
         }
     }
-
+  
+    //Renvoie un tableau composé des statistiques enregistrées d'un joueur dans le fichier "save_profil.csv"
     String[] getPlayerStat(int choixStat){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
@@ -552,6 +547,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         return stat;
     }
 
+    //Affiche les statistiques d'un joueur en utilisant le tableau définit précédemment
     void afficherPlayerStat(String[] playerStat){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
@@ -571,6 +567,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         println("            Tour joués en une partie : " + playerStat[8]);
     }
 
+    //Insère une marge permettant d'aligner correctement le classement dans la fonction centrerText
     String marge(int longColX, int longChaine){
         String m = "";
 
@@ -581,6 +578,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         return m;
     }
 
+    //Sert à centrer le texte pour l'affichage du classement
     String centrerText(int longLine, int longMot, String mot){
         String marge = "";
 
@@ -594,6 +592,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
     }
 
     // 3 colonnes: "PSEUDO" "BEST_SCORE" "BEST_TOURS_JOUES"
+    
+    //Affiche le classement 
     void afficherClassement(){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
@@ -697,18 +697,25 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         println();
     }
 
+    //Vérifie que le paramètre entré pour le menu est valide
     boolean menuEntree(int menu){
         return (menu >= 0 && menu <=5);
     }
 
+    
+    //Vérifie que le paramètre entré pour le profil est valide
     boolean choixProfilValide(int choixProfil){
         return choixProfil >= 0 && choixProfil <= 2;
     }
 
+    
+    //Vérifie que le paramètre entré pour la difficulté est valide
     boolean difficulteValide(int difficulte){
         return (difficulte>=0 && difficulte <=3);
     }
 
+    
+    //Vérifie que le paramètre entré pour les statistiques est valide
     boolean choixStatValide(int choixStat){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
         int nbL = rowCount(profilJoueur);
@@ -716,22 +723,31 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         return choixStat >= 0 && choixStat <= nbL;
     }
 
+    
+    //Vérifie que le paramètre entré pour les paramètres est valide
     boolean paramValide(int param){
         return (param>=0 && param <=4);
     }
 
+    
+    //Vérifie que le paramètre entré pour la couleur est valide
     boolean couleurValide(int couleur){
         return (couleur>=0 && couleur <= 6);
     }
 
+    
+    //Vérifie que le paramètre entré pour quitter est valide
     boolean valide_quitter(int quitter){
         return (quitter>=0 && quitter <= 2);
     }
 
+    
+    //Vérifie que le paramètre entré pour l'inventaire est valide
     boolean inventaireValide(int inv , BONUS []inventaire){
         return (inv>= 0 && inv <= nbBonusInventaire(inventaire));
     }
 
+    //Sélectionne la chance qu'une épreuve soit contienne un bonus en fonction de la difficulté
     double bonus_difficulte(int difficulte){
         if(difficulte==1){
             return 0.4;
@@ -742,6 +758,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
     
+    //Renvoie le nombre de bonus présent dans l'inventaire
     int nbBonusInventaire(BONUS[] inventaire){
         int res = 0;
         int len = length(inventaire);
@@ -752,6 +769,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
         return res;
     }
+    
+    //Choisit et renvoie un bonus de manière aléatoire
     BONUS selectionBonus(){
         double tmp = random();
         if (tmp<0.2){
@@ -767,11 +786,13 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
 
+    //Génère et renvoie un inventaire de bonus vide sous la forme d'un tableau
     BONUS[] creerInventaireVide(int taille){
         BONUS[] inventaire = new BONUS[taille];
         return inventaire;
     }
 
+    //Transforme un bonus en son affichage
     String toStringBonus(BONUS bonus){
         if (bonus==BONUS.AsDeCoeur){
             return "As de Coeur";
@@ -788,6 +809,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
     }
 
+    //Affiche l'inventaire avec les options de choix avant chaque bonus
     String afficherInventaire(BONUS[] inventaire){
         String res = "";
         int len = length(inventaire);
@@ -804,12 +826,13 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 res += "             "+(i+1) + " : Valet de Trefle \n";
             }
         }
-        if (inventaire[0]==null){
+        if (inventaire[0]==null){ //si l'inventaire est vide, affiche qu'il est vide
             println("            Votre inventaire est vide, quel dommage (sarcasme)...");
         }
         return res;
     }
 
+    //Décale l'inventaire vert la gauche pour éviter d'avoir des trous dans le tableau
     BONUS [] inventaireDecalage(BONUS [] inventaire){
         int len = length(inventaire);int cpt=0;
         BONUS [] res = new BONUS[len];
@@ -822,10 +845,12 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         return res;
     }
 
+    //Renvoie si l'inventaire est plein ou non
     boolean inventairePlein(BONUS[] inventaire){
         return (inventaire[length(inventaire)-1] != null);
     }
 
+    //Ajoute un bonus à l'inventaire à la première case vide
     void ajouterBonus(BONUS [] inventaire, BONUS bonus){
         int i = 0; int len = length(inventaire);
         while(inventaire[i]!=null){
@@ -833,23 +858,27 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
         inventaire[i]=bonus;
     }
+    
+    //Enlève un bonus de l'inventaire à partir de sa position et renvoie l'inventaire une fois décalé
     BONUS [] enleverBonus(BONUS[] inventaire, int choix){
         inventaire[choix]=null;
         return inventaireDecalage(inventaire);
     }
 
     void algorithm(){
-        afficherText(FIXAGE);
+        afficherText(FIXAGE); // Fixe le jeu en bas du terminal
 
-        couleur_base = "white";
+        couleur_base = "white"; 
         couleur_epreuve = "red";
         reset();
 
+        // Initialise tout les paramètres de menu à des valeurs impossibles
         int difficulte = -1, parametre = -1, couleur = -1,
             quitter_menu = -1, inventaire_menu = -1,
             choixProfil = -1, choixStat = -1, choixRanking = -1,
             regle = 1,
             
+        //Initialise les variables principales qui seront utilisée dans le jeu
             case_actuelle = 0, mouv = 0, nb_tours = 1,
             vies = 5, score = 0,
             
@@ -857,12 +886,15 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
 
         String pseudo = "",
             choixTour = "";
-
+        
+        // Crée un plateau vides ainsi que des variables annexes utilisées dans le jeu
         Cases[] plateau = new Cases[TAILLE_TABLEAU]; boolean carreau = false; boolean pic = false; BONUS bonusChoisi=BONUS.Rien; int multicarreau = 1;
         double multitrefle = 1.0; boolean trefle = false; BONUS newBonus = BONUS.Rien; boolean epreuveProchaine = false;
         int tailleInventaire = 5; BONUS[] inventaire = creerInventaireVide(tailleInventaire);
 
-        while(true){
+        while(true){ // Boucle infinie pour que le jeu se joue en boucle
+            
+            // Réinitialisation de toutes les valeurs après le retour au menu
             difficulte = -1; parametre = -1; choixProfil = -1; choixStat = -1; choixRanking = -1;
             pseudo = ""; nb_tours = 1; score = 0; vies = 5;
             epreuveProchaine = false; regle = 1;
@@ -871,28 +903,23 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
             clearScreen();
             afficherText(TITLE);
             println();
-            afficherText(MAIN_MENU);
-            while (!menuEntree(menu)){
+            afficherText(MAIN_MENU); // Affiche le menu avec les choix
+            
+            while (!menuEntree(menu)){ // Demande au joueur tant que ce n'est pas valide
                 println();
                 print("Veuillez entrez un entier valide : ");
                 menu = readInt();
                 println();
             }
 
-            if (menu == 1){
+            if (menu == 1){ // Si le joueur entre 1 pour une nouvelle partie
                 plateau = creerPlateau(TAILLE_TABLEAU , case_actuelle);
                 inventaire = creerInventaireVide(tailleInventaire);
 
-                while(!choixProfilValide(choixProfil)){
+                while(!choixProfilValide(choixProfil)){ // Redemande jusqu'à ce que le joueur entre un profil valide
                     clearScreen();
                     afficherText(MENU_JOUEUR);
-                    /*
-                    println("1 : Créer un joueur");
-                    println("2 : Jouer avec un joueur existant");
 
-                    println();
-                    println("0 : Retour");
-                    */
                     println();
                     print("Entrez un choix valide : ");
                     choixProfil = readInt();
@@ -922,33 +949,28 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                             choixProfil = -1;
                         }
                         else{
-                            pseudo = getJoueur(choixJoueur);
+                            pseudo = getJoueur(choixJoueur); // Initialise qui est le joueur
                         }
                     }
                 }
 
-                while(!difficulteValide(difficulte) && choixProfil != 0){
+                while(!difficulteValide(difficulte) && choixProfil != 0){ // Redemande jusqu'à ce que la difficulté soit valide
                     clearScreen();
                     afficherText(MENU_DIFFICULTE);
-                    /*
-                    println("1 : Facile");
-                    println("2 : Moyen");
-                    println("3 : Difficile");
-                    println();
-                    println("0 : Retour");
-                    */
                     println();
                     print("Entrez une difficulté valide : ");
                     difficulte = readInt();
                     println();
-                    if (difficulte == 0){
+                    if (difficulte == 0){ // Retour au menu
                         menu = -1;
                     }
                 }    
                 PROBA_BONUS = bonus_difficulte(difficulte);
 
-                while(menu==1){
+                while(menu==1){ // Boucle du jeu
                     quitter_menu = -1; choixTour = "";newBonus= BONUS.Rien;
+                    
+                    // Affichage principal du jeu à chaque tour
                     clearScreen();
                     println(toString(plateau));
                     println();
@@ -966,17 +988,18 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                     mouv = movement();
                     nb_tours += 1;
 
-                    if (epreuveProchaine && !pic && (!equals(choixTour, "quitter") || !equals(choixTour, "inventaire"))){
-                        if (carreau){
+                    // Si la prochaine case est une épreuve et que le bonus Pic n'est pas actif
+                    if (epreuveProchaine && !pic && (!equals(choixTour, "quitter") || !equals(choixTour, "inventaire"))){ 
+                        if (carreau){ // Effet du bonus carreau actif
                             multicarreau = nb_tours;
                             carreau = false;
                         }
-                        if (trefle){
+                        if (trefle){ //Effet du bonus Trefle actif
                             multitrefle = multitrefle *1.2;
                             trefle = false;
                         }
 
-                        if (!doEpreuve(difficulte)){
+                        if (!doEpreuve(difficulte)){ // Si la réponse à l'épreuve est fausse
                             if(random()<PROBA_BONUS){
                                 vies -= 1;
                                 score -= scoreMultiplieur(difficulte)*multicarreau *multitrefle+ 100;
@@ -992,16 +1015,16 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                             println("Bonne réponse");
 
                             if(random()<PROBA_BONUS){
-                                score += ( mouv + scoreMultiplieur(difficulte)*multicarreau*multitrefle ) + 100;
+                                score += ( mouv + scoreMultiplieur(difficulte)*multicarreau*multitrefle ) + 100; // Augmente le score avec les multiplieurs
                                 newBonus = selectionBonus();
 
-                                if (!inventairePlein(inventaire)){
+                                if (!inventairePlein(inventaire)){ // Ajoute un bonus si l'inventaire n'est pas plein
                                     ajouterBonus(inventaire, newBonus);
                                     println();
                                     println("Vous ajoutez "+ toStringBonus(newBonus)+" à votre inventaire !");
                                     println();
                                     println();
-                                }else{
+                                }else{ // Sinon force le joueur à utiliser un bonus pour le remplacer
                                     clearScreen();
                                     afficherText(MENU_INVENTAIRE);
 
@@ -1035,27 +1058,23 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                                     inventaire_menu = -1;
                                 }
                             }else{
-                                score += ( mouv + scoreMultiplieur(difficulte)*multicarreau*multitrefle ) + 100; 
+                                score += ( mouv + scoreMultiplieur(difficulte)*multicarreau*multitrefle ) + 100; // Augmente le score avec les multiplieurs
                                 println();
                             }
                         }
-                        multicarreau = 1;pic = false;
+                        multicarreau = 1;pic = false; // Réinitialise le multiplieurs de trèfle et reinitialise pic
                     }
                     epreuveProchaine = (plateau[prochaineCase(case_actuelle,mouv)] == Cases.EPREUVE);
                     choixTour = jouerTour(plateau , case_actuelle, prochaineCase(case_actuelle,mouv));
                     
-                    if(!equals(choixTour,"quitter") && !equals(choixTour, "inventaire")){
+                    if(!equals(choixTour,"quitter") && !equals(choixTour, "inventaire")){ // Modifie la case actuelle du joueur à celle de la prochaine case
                         case_actuelle=prochaineCase(case_actuelle,mouv);
                     }
+                    
+                    // Ouvre le menu pour quitter une partie en cours
                     while ((equals(choixTour, "quitter") )&& !valide_quitter(quitter_menu)){
                         clearScreen();
                         afficherText(MENU_QUITTER);
-                        /*
-                        println("1 : Quitter sans sauvegarder");
-                        println("2 : Quitter en sauvegardant");
-                        println();
-                        println("0 : Retour");
-                        */
                         println();
                         print("Entrez un entier valide : ");
                         quitter_menu = readInt();
@@ -1074,6 +1093,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                             choixTour = "";
                         }
                     }
+                    
+                    // Permets d'accéder à l'inventaire et utiliser un bonus
                     while ((equals(choixTour, "inventaire") )&& !inventaireValide(inventaire_menu, inventaire)){
                         clearScreen();
                         afficherText(MENU_INVENTAIRE);
@@ -1109,7 +1130,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                     }
                     inventaire_menu = -1;
                     
-                    if (vies == 0){
+                    if (vies == 0){ // Si jamais le joueur n'a plus de vie, il perd, cela sauvegarde et coupe la boucle
                         clearScreen();
                         afficherText(DEFAITE);
                         println(toString(plateau));
@@ -1177,9 +1198,11 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                     }
                 }
             }
+            // PARAMETRES
             else if (menu == 4){
                 while(!paramValide(parametre)){
                     couleur = -1;
+                    // Affichage du menu des paramètres
                     clearScreen();
                     afficherText("parametre.txt");
                     println();
@@ -1213,21 +1236,12 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                         epreuve = readChar();
                         parametre = -1;
                     } else if (parametre == 4){
+                        
+                        // Sert à modifier les couleurs
                         while(!couleurValide(couleur) && parametre == 4){
                             clearScreen();
                             afficherText(MENU_COULEUR);
-                            /*
-                            println("Couleurs : ");
-                            println();
-                            println("1 : Rose");
-                            println("2 : Bleu");
-                            println("3 : Vert");
-                            println("4 : Blanc");
-                            println("5 : Noir");
-                            println("6 : Reset");
-                            println();
-                            println("0 : Retour");
-                            */
+
                             println();
                             print("Entrez un entier valide : ");
                             couleur = readInt();
@@ -1267,9 +1281,10 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                         }
                     }
                 }
+            // REGLES
             }else if(menu == 5){
-                //print("Mettez \"Entrée\" pour retourner au menu : ");
-                while(regle!=0){
+                
+                while(regle!=0){ // Permet de sélectionner quel page de règle
                     if (regle==1){
                         clearScreen();
                         afficherText(MENU_REGLE_1);
@@ -1285,7 +1300,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 menu = -1;
             }
             
-            else if(menu == 0){
+            else if(menu == 0){ // Casse la boucle while(true) pour quitter le jeu après avoir nettoyer l'écran
                 clearScreen();
                 break;
             } 
