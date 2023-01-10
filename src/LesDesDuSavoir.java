@@ -190,7 +190,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         reponse = readInt();
         println();
 
-        if (!testerResultat(res , reponse)){
+        if (!resultatEstCorrect(res , reponse)){
             println("Mauvaise réponse, c'était " + res);
 
             return false;
@@ -213,14 +213,15 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
 
         int[] tabInit = new int[]{1,2,3,4,5};
 
+        // Affiche la question
         text(couleur_epreuve);
-        println(choixQ);
-        println("           " + getCell(question, choixQ, 0) ); // Affiche la question
+        println("           " + getCell(question, choixQ, 0) );
 
         if(difficulte == 3){ // DIFFICILE
             int[] tabMel = new int[]{-1,-1,-1,-1,-1};
 
-            for(int i=0; i<length(tabMel); i++){ // Mélange aléatoirement les réponses
+            // Mélange aléatoirement les réponses
+            for(int i=0; i<length(tabMel); i++){
                 choixR = (int) (random() * length(tabMel));
 
                 while(tabMel[choixR] != -1){
@@ -233,7 +234,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 tabMel[choixR] = tabInit[i];
             }
 
-            for(int i=0; i<5; i++){ // Affiche les différentes réponses possible
+            // Affiche les différentes réponses possible
+            for(int i=0; i<5; i++){
                 println("           " + (i+1) + " - " + getCell(question, choixQ, tabMel[i]) );
             }
             text(couleur_base);
@@ -243,6 +245,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         else if(difficulte == 2){ // MOYEN
             int[] tabMel = new int[]{-1,-1,-1,-1};
 
+            // Mélange aléatoirement les réponses
             for(int i=0; i<length(tabMel); i++){
                 choixR = (int) (random() * length(tabMel));
 
@@ -256,7 +259,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 tabMel[choixR] = tabInit[i];
             }
 
-            for(int i=0; i<4; i++){ // Affiche les différentes réponses possible
+            // Affiche les différentes réponses possible
+            for(int i=0; i<4; i++){
                 println("           " + (i+1) + " - " + getCell(question, choixQ, tabMel[i]) );
             }
             text(couleur_base);
@@ -266,6 +270,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         else{ // FACILE
             int[] tabMel = new int[]{-1,-1,-1};
 
+            // Mélange aléatoirement les réponses
             for(int i=0; i<length(tabMel); i++){
                 choixR = (int) (random() * length(tabMel));
 
@@ -279,7 +284,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 tabMel[choixR] = tabInit[i];
             }
 
-            for(int i=0; i<3; i++){ // Affiche les différentes réponses possible
+            // Affiche les différentes réponses possible
+            for(int i=0; i<3; i++){
                 println("           " + (i+1) + " - " + getCell(question, choixQ, tabMel[i]) );
             }
             text(couleur_base);
@@ -292,7 +298,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         reponse = readInt();
         println();
 
-        if (!testerResultat(res , reponse)){
+        if (!resultatEstCorrect(res , reponse)){
             println("Mauvaise réponse, c'était " + getCell(question, choixQ, 1));
 
             return false;
@@ -303,18 +309,18 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
     }
 
     int scoreMultiplieur(int difficulte){
-        if(difficulte == 3){
+        if(difficulte == 3){ // DIFFICILE
             return 9;
         }
-        else if(difficulte == 2){
+        else if(difficulte == 2){ // MOYEN
             return 3;
         }
-        else{
+        else{ // FACILE
             return 1;
         }
     }
 
-    boolean testerResultat(int res, int reponse){
+    boolean resultatEstCorrect(int res, int reponse){
         return (res==reponse);
     }
 
@@ -353,7 +359,6 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         return p;
     }
 
-    
 /*
     int resultat(String math){
         int len = length(math);
@@ -394,7 +399,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                 res_epreuve = epreuveMath(0);
                 print("Entrez une réponse : ");
                 reponse = readInt();
-                if (!testerResultatMath(res_epreuve , reponse)){
+                if (!resultatEstCorrectMath(res_epreuve , reponse)){
                     println("Mauvaise réponse");
                     vies -= 1;
                 }else{
@@ -566,10 +571,10 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         println("            Tour joués en une partie : " + playerStat[8]);
     }
 
-    String marge(int longCol_X, int longChaine){
+    String marge(int longColX, int longChaine){
         String m = "";
 
-        for(int i=0; i<longCol_X-longChaine; i++){
+        for(int i=0; i<longColX-longChaine; i++){
             m += " ";
         }
 
@@ -588,14 +593,15 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         return marge + mot + marge;
     }
 
-    void afficherClassement(){ // 3 colonnes: "PSEUDO" "BEST_SCORE" "BEST_TOURS_JOUES"
+    // 3 colonnes: "PSEUDO" "BEST_SCORE" "BEST_TOURS_JOUES"
+    void afficherClassement(){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
         int nbL = rowCount(profilJoueur),
             nbCol = columnCount(profilJoueur),
 
             longCol = 13,
-            longCol_Pseudo = 0, longCol_BestScore = 0, longCol_BestTourJoues = 0,
+            longColPseudo = 0, longlongColBestScore = 0, longColBestTourJoues = 0,
 
             idx = 0;
 
@@ -605,28 +611,28 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         for(int i=0; i<nbL; i++){ // Calcul longueur
 
             // pour colonne "PSEUDO"
-            if(length(getCell(profilJoueur, i, 0) ) > longCol_Pseudo){
-                longCol_Pseudo = length(getCell(profilJoueur, i, 0) );
+            if(length(getCell(profilJoueur, i, 0) ) > longColPseudo){
+                longColPseudo = length(getCell(profilJoueur, i, 0) );
 
-                //println(longCol_Pseudo);
+                //println(longColPseudo);
             }
 
             // pour colonne "BEST_SCORE"
-            if(length(getCell(profilJoueur, i, 6) ) > longCol_BestScore){
-                longCol_BestScore = length(getCell(profilJoueur, i, 6) );
+            if(length(getCell(profilJoueur, i, 6) ) > longlongColBestScore){
+                longlongColBestScore = length(getCell(profilJoueur, i, 6) );
 
-                //println(longCol_BestScore);
+                //println(longlongColBestScore);
             }
 
             // pour colonne "BEST_TOURS_JOUES"
-            if(length(getCell(profilJoueur, i, 8) ) > longCol_BestTourJoues){
-                longCol_BestTourJoues = length(getCell(profilJoueur, i, 8) );
+            if(length(getCell(profilJoueur, i, 8) ) > longColBestTourJoues){
+                longColBestTourJoues = length(getCell(profilJoueur, i, 8) );
 
-                //println(longCol_BestTourJoues);
+                //println(longColBestTourJoues);
             }
         }
 
-        longCol += longCol_Pseudo + longCol_BestScore + longCol_BestTourJoues;
+        longCol += longColPseudo + longlongColBestScore + longColBestTourJoues;
 
         //println(longCol);
 
@@ -664,9 +670,9 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         }
 
         // Affichage du Classement
-        println("              " + centrerText(longCol_Pseudo+3, length("PSEUDO"), "PSEUDO") + "   "
-            + centrerText(longCol_BestScore, length("SCORE"), "SCORE") + "   "
-            + centrerText(longCol_BestTourJoues, length("TOURS"), "TOURS") );
+        println("              " + centrerText(longColPseudo+3, length("PSEUDO"), "PSEUDO") + "   "
+            + centrerText(longlongColBestScore, length("SCORE"), "SCORE") + "   "
+            + centrerText(longColBestTourJoues, length("TOURS"), "TOURS") );
 
         print("             ");
         for(int i=0; i<longCol; i++){
@@ -676,9 +682,9 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         println();
 
         for(int l=0; l<LARGEUR_CLASSEMENT; l++){
-            print("             | " + (l+1) + ". " + triStats[l][0] +  marge(longCol_Pseudo, length(triStats[l][0]) ) + " | "
-                + triStats[l][1] +  marge(longCol_BestScore, length(triStats[l][1]) ) + " | "
-                + triStats[l][2] +  marge(longCol_BestTourJoues, length(triStats[l][2]) ) + " |");
+            print("             | " + (l+1) + ". " + triStats[l][0] +  marge(longColPseudo, length(triStats[l][0]) ) + " | "
+                + triStats[l][1] +  marge(longlongColBestScore, length(triStats[l][1]) ) + " | "
+                + triStats[l][2] +  marge(longColBestTourJoues, length(triStats[l][2]) ) + " |");
 
             println();
         }
@@ -765,6 +771,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
         BONUS[] inventaire = new BONUS[taille];
         return inventaire;
     }
+
     String toStringBonus(BONUS bonus){
         if (bonus==BONUS.AsDeCoeur){
             return "As de Coeur";
@@ -780,6 +787,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
             return "#ERR0R";
         }
     }
+
     String afficherInventaire(BONUS[] inventaire){
         String res = "";
         int len = length(inventaire);
@@ -863,12 +871,6 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
             clearScreen();
             afficherText(TITLE);
             println();
-            /*println("1 : Nouvelle partie");
-            println("2 : Reprendre une partie en cours");objet
-            println("3 : Paramètres");
-            println();
-            println("0 : Quitter");
-            */
             afficherText(MAIN_MENU);
             while (!menuEntree(menu)){
                 println();
@@ -880,6 +882,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
             if (menu == 1){
                 plateau = creerPlateau(TAILLE_TABLEAU , case_actuelle);
                 inventaire = creerInventaireVide(tailleInventaire);
+
                 while(!choixProfilValide(choixProfil)){
                     clearScreen();
                     afficherText(MENU_JOUEUR);
@@ -943,6 +946,7 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                     }
                 }    
                 PROBA_BONUS = bonus_difficulte(difficulte);
+
                 while(menu==1){
                     quitter_menu = -1; choixTour = "";newBonus= BONUS.Rien;
                     clearScreen();
@@ -1105,8 +1109,6 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                     }
                     inventaire_menu = -1;
                     
-
-
                     if (vies == 0){
                         clearScreen();
                         afficherText(DEFAITE);
@@ -1123,7 +1125,8 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                     }
                 }
             }
-            else if(menu == 2){ // STATISTIQUES
+            // STATISTIQUES
+            else if(menu == 2){
                 while(!choixStatValide(choixStat)){
                     clearScreen();
                     afficherText(MENU_STATISTIQUES);
@@ -1152,10 +1155,11 @@ boolean doEpreuve(int difficulte){ // Tire aléatoirement une épreuve
                         print("Mettez \"Entrée\" pour retourner au menu : ");
                         readString();
                         menu = 2;   
-                        }
                     }
                 }
-            else if(menu == 3){ // CLASSEMENT
+            }
+            // CLASSEMENT
+            else if(menu == 3){
                 while(choixRanking != 0){
                     clearScreen();
                     afficherText(MENU_CLASSEMENT);
