@@ -16,6 +16,7 @@ class LesDesDuSavoir extends Program{
     final double PROBA_EPREUVE = 0.33; // Chance qu'une épreuve soit générée
     double PROBA_BONUS = 0.0;
 
+    
     final String FIXAGE = "../ressources/fixage.txt";
     final String TITLE = "../ressources/savoir.txt";
     final String MAIN_MENU = "../ressources/menu.txt";
@@ -319,11 +320,6 @@ class LesDesDuSavoir extends Program{
             return 1;
         }
     }
-
-    // Renvoie si la réponse donnée est correcte
-    boolean resultatEstCorrect(int res, int reponse){
-        return (res==reponse);
-    }
     
     // Sert à creer un nouveau profil pour agrémenter la base de données
     Profil creerProfil(String pseudo, int score, int nb_tours){
@@ -370,7 +366,7 @@ class LesDesDuSavoir extends Program{
     String getJoueur(int choixJoueur){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
 
-        return getCell(profilJoueur, choixJoueur-1, 0);
+        return getCell(profilJoueur, choixJoueur, 0);
     }
 
     // Sauvegarde un profil sur le fichier csv "save_profil.csv"
@@ -417,6 +413,7 @@ class LesDesDuSavoir extends Program{
 
             saveCSV(chaines, SAVE_PROFIL);
         }
+
         // Sauvegarde sur un profil existant
         else if(choixProfil == 2){
             String[][] chaines = new String[nbL][nbCol];
@@ -536,9 +533,8 @@ class LesDesDuSavoir extends Program{
         return marge + mot + marge;
     }
 
+    // Affiche le classement 
     // 3 colonnes: "PSEUDO" "BEST_SCORE" "BEST_TOURS_JOUES"
-    
-    //Affiche le classement 
     // !!! ATTENTION la première ligne du fichier save_profil est désignée au nom des colonnes !!!
     void afficherClassement(){
         CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
@@ -633,63 +629,6 @@ class LesDesDuSavoir extends Program{
         }
 
         println();
-    }
-
-    // Vérifie que le paramètre entré pour le menu est valide
-    boolean menuEntree(int menu){
-        return (menu >= 0 && menu <=5);
-    }
-
-    
-    // Vérifie que le paramètre entré pour le profil est valide
-    boolean choixProfilValide(int choixProfil){
-        return choixProfil >= 0 && choixProfil <= 2;
-    }
-
-    // Vérifie que le paramètre entré pour le joueur est valide
-    boolean choixJoueurValide(int choixJoueur){
-        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
-        int nbL = rowCount(profilJoueur);
-
-        return choixJoueur >= 0 && choixJoueur < nbL;
-    }
-    
-    // Vérifie que le paramètre entré pour la difficulté est valide
-    boolean difficulteValide(int difficulte){
-        return (difficulte>=0 && difficulte <=3);
-    }
-
-    
-    // Vérifie que le paramètre entré pour les statistiques est valide
-    boolean choixStatValide(int choixStat){
-        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
-        int nbL = rowCount(profilJoueur);
-
-        return choixStat >= 1 && choixStat < nbL;
-    }
-
-    
-    // Vérifie que le paramètre entré pour les paramètres est valide
-    boolean paramValide(int param){
-        return (param>=0 && param <=4);
-    }
-
-    
-    // Vérifie que le paramètre entré pour la couleur est valide
-    boolean couleurValide(int couleur){
-        return (couleur>=0 && couleur <= 6);
-    }
-
-    
-    // Vérifie que le paramètre entré pour quitter est valide
-    boolean valide_quitter(int quitter){
-        return (quitter>=0 && quitter <= 2);
-    }
-
-    
-    // Vérifie que le paramètre entré pour l'inventaire est valide
-    boolean inventaireValide(int inv , BONUS []inventaire){
-        return (inv>= 0 && inv <= nbBonusInventaire(inventaire));
     }
 
     // Sélectionne la chance qu'une épreuve soit contienne un bonus en fonction de la difficulté
@@ -805,11 +744,6 @@ class LesDesDuSavoir extends Program{
         return res;
     }
 
-    // Renvoie si l'inventaire est plein ou non
-    boolean inventairePlein(BONUS[] inventaire){
-        return (inventaire[length(inventaire)-1] != null);
-    }
-
     //Ajoute un bonus à l'inventaire à la première case vide
     void ajouterBonus(BONUS [] inventaire, BONUS bonus){
         int i = 0; int len = length(inventaire);
@@ -828,6 +762,97 @@ class LesDesDuSavoir extends Program{
         return inventaireDecalage(inventaire);
     }
 
+    ////// FONCTION DE VERIFICATIONS /////
+
+    // Renvoie True si la réponse donnée est correcte
+    boolean resultatEstCorrect(int res, int reponse){
+        return (res==reponse);
+    }
+
+    // Vérifie que le paramètre entré pour le menu est valide
+    boolean menuEntree(int menu){
+        return (menu >= 0 && menu <=5);
+    }
+
+    // Vérifie que le paramètre entré pour le profil est valide
+    boolean choixProfilValide(int choixProfil){
+        return choixProfil >= 0 && choixProfil <= 2;
+    }
+
+    // Vérifie que le paramètre entré pour le joueur est valide
+    boolean choixJoueurValide(int choixJoueur){
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
+        int nbL = rowCount(profilJoueur);
+
+        return choixJoueur >= 0 && choixJoueur < nbL;
+    }
+
+    // Vérifie que le paramètre entré pour la difficulté est valide
+    boolean difficulteValide(int difficulte){
+        return (difficulte>=0 && difficulte <=3);
+    }
+
+    // Vérifie que le paramètre entré pour les statistiques est valide
+    boolean choixStatValide(int choixStat){
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
+        int nbL = rowCount(profilJoueur);
+
+        return choixStat >= 1 && choixStat < nbL;
+    }
+
+    // Vérifie que le paramètre entré pour les paramètres est valide
+    boolean paramValide(int param){
+        return (param>=0 && param <=4);
+    }
+
+    // Vérifie que le paramètre entré pour la couleur est valide
+    boolean couleurValide(int couleur){
+        return (couleur>=0 && couleur <= 6);
+    }
+
+    // Vérifie que le paramètre entré pour quitter est valide
+    boolean valide_quitter(int quitter){
+        return (quitter>=0 && quitter <= 2);
+    }
+
+    // Vérifie que le paramètre entré pour l'inventaire est valide
+    boolean inventaireValide(int inv , BONUS []inventaire){
+        return (inv>= 0 && inv <= nbBonusInventaire(inventaire));
+    }
+    
+    // Renvoie si l'inventaire est plein ou non
+    boolean inventairePlein(BONUS[] inventaire){
+        return (inventaire[length(inventaire)-1] != null);
+    }
+
+    ////// FONCTION DE TESTS /////
+
+    void testGetJoueur(){
+        assertEquals("Ruxo", getJoueur(2) );
+    }
+
+    void testGetPlayerStat(){
+        String[] chaine = new String[]{"PoA", "3162", "252", "789", "2121", "9999999", "99999", "99999", "9999"};
+
+        assertArrayEquals(chaine, getPlayerStat(1));
+    }
+
+    void testMarge(){
+        assertEquals("          ", marge(15, 5));
+        assertEquals("  ", marge(8, 6));
+    }
+
+    void testCentrerText(){
+        assertEquals("    PSEUDO    ", centrerText(15, 6, "PSEUDO"));
+
+        assertEquals("  SCORE  ", centrerText(9, 5, "SCORE"));
+        assertEquals(" SCORE ", centrerText(8, 5, "SCORE"));
+
+        assertEquals("TOURS", centrerText(3, 5, "TOURS"));
+    }
+
+    ///// FONCTION PRINCIPALE /////
+    
     void algorithm(){
         afficherText(FIXAGE); // Fixe le jeu en bas du terminal
 
