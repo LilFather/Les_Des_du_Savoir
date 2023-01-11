@@ -7,7 +7,6 @@ Contacts : paul.cancel.etu@univ-lille.fr , atilla.tas.etu@univ-lille.fr
 
 Des captures d'écran illustrant le fonctionnement du logiciel sont proposées dans le répertoire shots.
 
-
 ## Utilisation de Les Dés du Savoir
 
 Afin d'utiliser le projet, il suffit de taper les commandes suivantes dans un terminal :
