@@ -15,7 +15,6 @@ class LesDesDuSavoir extends Program{
 
     final double PROBA_EPREUVE = 0.33; // Chance qu'une épreuve soit générée
     double PROBA_BONUS = 0.0;
-
     
     final String FIXAGE = "../ressources/fixage.txt";
     final String TITLE = "../ressources/savoir.txt";
@@ -43,7 +42,7 @@ class LesDesDuSavoir extends Program{
     }
 
     // Crée un plateau de cases pouvant être une épreuve, un chemin où le joueur
-    Cases[]creerPlateau(int taille , int case_actuelle){
+    Cases[] creerPlateau(int taille , int case_actuelle){
         Cases [] plateau = new Cases[taille];
 
         for (int i = 0 ; i<taille; i++){
@@ -731,11 +730,13 @@ class LesDesDuSavoir extends Program{
 
     // Décale l'inventaire vert la gauche pour éviter d'avoir des trous dans le tableau
     BONUS [] inventaireDecalage(BONUS [] inventaire){
-        int len = length(inventaire);int cpt=0;
+        int len = length(inventaire);
+        int cpt=0;
+
         BONUS [] res = new BONUS[len];
 
         for (int i=0;i<len;i++){
-            if (inventaire[i]!=null && inventaire[i]!=BONUS.Rien){
+            if (inventaire[i]!=null){
                 res[cpt] = inventaire[i];
                 cpt+= 1;
             }
@@ -811,7 +812,7 @@ class LesDesDuSavoir extends Program{
     }
 
     // Vérifie que le paramètre entré pour quitter est valide
-    boolean valide_quitter(int quitter){
+    boolean valideQuitter(int quitter){
         return (quitter>=0 && quitter <= 2);
     }
 
@@ -826,6 +827,23 @@ class LesDesDuSavoir extends Program{
     }
 
     ////// FONCTION DE TESTS /////
+
+    void testCasesToChar(){
+        assertEquals('J', casesToChar(Cases.JOUEUR));
+        assertEquals('_', casesToChar(Cases.CHEMIN));
+        assertEquals('?', casesToChar(Cases.EPREUVE));
+    }
+
+    void testToString(){
+        Cases[] plateau = new Cases[]{Cases.JOUEUR, Cases.CHEMIN, Cases.CHEMIN, Cases.EPREUVE, Cases.CHEMIN};
+
+        assertEquals("J__?_", toString(plateau));
+    }
+
+    void testProchaineCase(){
+        assertEquals(22, prochaineCase(17, 5));
+        assertEquals(4, prochaineCase(150, 6));
+    }
 
     void testGetJoueur(){
         assertEquals("Ruxo", getJoueur(2) );
@@ -851,8 +869,139 @@ class LesDesDuSavoir extends Program{
         assertEquals("TOURS", centrerText(3, 5, "TOURS"));
     }
 
+    void testNbBonusInventaire(){
+        BONUS[] inventaire = new BONUS[]{BONUS.AsDeCoeur, BONUS.AsDePic, BONUS.ValetDeTrefle, null, null};
+
+        assertEquals(3, nbBonusInventaire(inventaire));
+    }
+
+    void testToStringBonus(){
+        assertEquals("As de Coeur", toStringBonus(BONUS.AsDeCoeur));
+        assertEquals("As de Carreau", toStringBonus(BONUS.AsDeCarreau));
+        assertEquals("As de Pic", toStringBonus(BONUS.AsDePic));
+        assertEquals("As de Trefle", toStringBonus(BONUS.AsDeTrefle));
+        assertEquals("Valet de Trefle", toStringBonus(BONUS.ValetDeTrefle));
+
+        assertEquals("#ERR0R", toStringBonus(BONUS.Rien));
+    }
+
+    void testAfficherInventaire(){
+        BONUS[] inventaire = new BONUS[]{BONUS.AsDeCoeur, BONUS.AsDePic, BONUS.ValetDeTrefle, null, null};
+
+        assertEquals("             "+ 1 + " : As de Coeur \n" +
+                     "             "+ 2 + " : As de Pic \n" + 
+                     "             "+ 3 + " : Valet de Trefle \n", afficherInventaire(inventaire));
+    }
+
+    void testInventaireDecalage(){
+        BONUS[] inventaire = new BONUS[]{BONUS.AsDeCoeur, null, BONUS.ValetDeTrefle, null, null};
+        BONUS[] res = inventaireDecalage(inventaire); //{BONUS.AsDeCoeur, BONUS.ValetDeTrefle, null, null, null}
+
+        assertEquals(BONUS.AsDeCoeur, res[0]);
+        assertEquals(BONUS.ValetDeTrefle, res[1]);
+    }
+
+    void testEnleverBonus(){
+        BONUS[] inventaire = new BONUS[]{BONUS.AsDeCoeur, BONUS.AsDePic, BONUS.ValetDeTrefle, null, null};
+        BONUS[] res = enleverBonus(inventaire, 1); // {BONUS.AsDeCoeur, BONUS.ValetDeTrefle, null, null, null}
+
+        assertEquals(BONUS.AsDeCoeur, res[0]);
+        assertEquals(BONUS.ValetDeTrefle, res[1]);
+    }
+
+    void testResultatEstCorrec(){
+        assertTrue(resultatEstCorrect(42, 42));
+
+        assertFalse(resultatEstCorrect(1, 4));
+    }
+
+    void testMenuEntree(){
+        assertTrue(menuEntree(0)); // Valeur min possible
+        assertTrue(menuEntree(3));
+        assertTrue(menuEntree(5));
+
+        assertFalse(menuEntree(-1));
+        assertFalse(menuEntree(7));
+    }
+
+    void testChoixProfilValide(){
+        assertTrue(choixProfilValide(0)); // Valeur min possible
+        assertTrue(choixProfilValide(1));
+        assertTrue(choixProfilValide(2)); // Valeur max possible
+
+        assertFalse(choixProfilValide(-1));
+        assertFalse(choixProfilValide(3));
+    }
+
+    void testChoixJoueurValide(){
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
+        int nbL = rowCount(profilJoueur);
+
+        assertTrue(choixJoueurValide(0)); // Valeur min possible
+        assertTrue(choixJoueurValide(nbL-1)); // Valeur max possible
+
+        assertFalse(choixJoueurValide(nbL));
+    }
+
+    void testDifficulteValide(){
+        assertTrue(difficulteValide(0)); // Valeur min possible
+        assertTrue(difficulteValide(3)); // Valeur max possible
+
+        assertFalse(difficulteValide(5));
+    }
+
+    void testChoixStatValide(){
+        CSVFile profilJoueur = loadCSV(SAVE_PROFIL);
+        int nbL = rowCount(profilJoueur);
+
+        assertTrue(choixStatValide(1)); // Valeur min possible
+        assertTrue(choixStatValide(nbL-1)); // Valeur max possible
+
+        assertFalse(choixStatValide(0));
+        assertFalse(choixStatValide(nbL));
+    }
+
+    void testParamValide(){
+        assertTrue(paramValide(0)); // Valeur min possible
+        assertTrue(paramValide(4)); // Valeur max possible
+
+        assertFalse(paramValide(-1));
+        assertFalse(paramValide(5));
+    }
+
+    void testCouleurValide(){
+        assertTrue(couleurValide(0));
+        assertTrue(couleurValide(6));
+
+        assertFalse(couleurValide(7));
+    }
+
+    void testValideQuitter(){
+        assertTrue(valideQuitter(0));
+        assertTrue(valideQuitter(2));
+
+        assertFalse(valideQuitter(-1));
+    }
+
+    void testInventaireValide(){
+        BONUS[] inventaire = new BONUS[]{BONUS.AsDeCoeur, BONUS.AsDePic, BONUS.ValetDeTrefle, null, null};
+
+        assertTrue(inventaireValide(0, inventaire));
+        assertTrue(inventaireValide(2, inventaire));
+
+        assertFalse(inventaireValide(4, inventaire));
+    }
+
+    void testInventairePlein(){
+        BONUS[] inventaire1 = new BONUS[]{BONUS.AsDeCoeur, BONUS.AsDePic, BONUS.ValetDeTrefle, BONUS.AsDeCoeur, BONUS.ValetDeTrefle};
+        BONUS[] inventaire2 = new BONUS[]{BONUS.AsDeCoeur, BONUS.AsDePic, BONUS.ValetDeTrefle, null, null};
+
+        assertTrue(inventairePlein(inventaire1));
+
+        assertFalse(inventairePlein(inventaire2));
+    }
+
     ///// FONCTION PRINCIPALE /////
-    
     void algorithm(){
         afficherText(FIXAGE); // Fixe le jeu en bas du terminal
 
@@ -1081,7 +1230,7 @@ class LesDesDuSavoir extends Program{
                     }
                     
                     // Ouvre le menu pour quitter une partie en cours
-                    while ((equals(choixTour, "quitter") )&& !valide_quitter(quitter_menu)){
+                    while ((equals(choixTour, "quitter") )&& !valideQuitter(quitter_menu)){
                         clearScreen();
                         afficherText(MENU_QUITTER);
                         println();
