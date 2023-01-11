@@ -24,12 +24,12 @@ class LesDesDuSavoir extends Program{
     final String MENU_JOUEUR = "../ressources/creerjoueurmenu.txt";
     final String MENU_INVENTAIRE = "../ressources/inventaire.txt";
     final String MENU_QUITTER = "../ressources/quitter_partie.txt";
-    final String MENU_STATISTIQUES = "../ressources/statistique.txt";
+    final String MENU_STATISTIQUES = "../ressources/statistiques.txt";
     final String MENU_CLASSEMENT = "../ressources/classement.txt";
     final String MENU_PARAMETRE = "../ressources/parametre.txt";
     final String MENU_COULEUR = "../ressources/couleurs.txt";
-    final String MENU_REGLE_1 = "../ressources/regle.txt";
-    final String MENU_REGLE_2 = "../ressources/regle2.txt";
+    final String MENU_REGLE_1 = "../ressources/regles.txt";
+    final String MENU_REGLE_2 = "../ressources/regles2.txt";
     final String DEFAITE = "../ressources/defaite.txt";
 
     final String SAVE_PROFIL = "../ressources/save_profil.csv";
